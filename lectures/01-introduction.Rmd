@@ -1,0 +1,266 @@
+---
+title: "Introduction to Linear Regression and Reproducibility"
+author: "Linear Regression Course"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+    theme: flatly
+    highlight: tango
+---
+
+## Learning Objectives
+
+By the end of this lecture, you will be able to:
+
+- Understand the importance of reproducibility in statistical analysis
+- Set up a reproducible R workflow using tidyverse
+- Perform basic exploratory data analysis
+- Understand the concept of linear relationships between variables
+
+## Setup
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)  # Data manipulation and visualization
+library(broom)      # Tidy model outputs
+library(car)        # Regression diagnostics
+
+# Set default ggplot theme
+theme_set(theme_minimal())
+
+# Set seed for reproducibility
+set.seed(123)
+```
+
+## What is Reproducibility?
+
+**Reproducibility** means that someone else (including future you!) can:
+
+1. Obtain the same data
+2. Run the same code
+3. Get the same results
+
+### Why Does It Matter?
+
+- **Science**: Results must be verifiable
+- **Collaboration**: Others need to understand and build on your work
+- **Error detection**: Easier to find and fix mistakes
+- **Efficiency**: Automate repetitive analyses
+- **Transparency**: Clear documentation of analytical choices
+
+### Elements of Reproducible Research
+
+1. **Version control** (Git/GitHub)
+2. **Clear documentation** (README files, comments)
+3. **Organized structure** (logical folder hierarchy)
+4. **Dependency management** (document package versions)
+5. **Literate programming** (R Markdown: code + narrative)
+6. **Raw data preservation** (never modify original data)
+7. **Scripted workflows** (no manual steps)
+
+## Tidyverse Framework
+
+The **tidyverse** is a collection of R packages designed for data science:
+
+```{r tidyverse-packages, eval=FALSE}
+library(tidyverse)  # Loads:
+# - ggplot2: visualization
+# - dplyr: data manipulation
+# - tidyr: data tidying
+# - readr: data import
+# - purrr: functional programming
+# - tibble: modern data frames
+# - stringr: string manipulation
+# - forcats: factor handling
+```
+
+### Tidyverse Principles
+
+1. **Tidy data**: Each variable is a column, each observation is a row
+2. **Pipe operator** (`%>%`): Chain operations together
+3. **Consistent API**: Similar function names and arguments across packages
+4. **Human-readable code**: Functions named as verbs
+
+## Example: Exploratory Data Analysis
+
+Let's explore a simple dataset to understand the basics of linear relationships.
+
+### Generate Example Data
+
+```{r generate-data}
+# Create a dataset: relationship between study hours and test scores
+study_data <- tibble(
+  student_id = 1:50,
+  hours_studied = runif(50, min = 0, max = 10),
+  test_score = 50 + 5 * hours_studied + rnorm(50, mean = 0, sd = 5)
+)
+
+# View first few rows
+head(study_data)
+```
+
+### Summarize the Data
+
+```{r summary-stats}
+# Summary statistics
+summary(study_data)
+
+# More detailed summary
+study_data %>%
+  select(hours_studied, test_score) %>%
+  summary()
+```
+
+### Visualize the Relationship
+
+```{r scatter-plot, fig.width=8, fig.height=5}
+ggplot(study_data, aes(x = hours_studied, y = test_score)) +
+  geom_point(alpha = 0.6, size = 3) +
+  labs(
+    title = "Relationship Between Study Hours and Test Score",
+    x = "Hours Studied",
+    y = "Test Score (out of 100)",
+    caption = "Simulated data for demonstration"
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+**Observation**: There appears to be a positive linear relationship between hours studied and test scores.
+
+### Calculate Correlation
+
+```{r correlation}
+# Pearson correlation coefficient
+cor_value <- cor(study_data$hours_studied, study_data$test_score)
+cat("Correlation:", round(cor_value, 3))
+```
+
+## Simple Linear Regression: Preview
+
+Linear regression helps us:
+1. Quantify the relationship between variables
+2. Make predictions
+3. Test hypotheses about relationships
+
+The basic model:
+$$Y = \beta_0 + \beta_1 X + \epsilon$$
+
+Where:
+- $Y$ = response variable (test score)
+- $X$ = predictor variable (hours studied)
+- $\beta_0$ = intercept (expected score with 0 hours)
+- $\beta_1$ = slope (change in score per hour studied)
+- $\epsilon$ = random error
+
+```{r simple-regression}
+# Fit a simple linear model
+model <- lm(test_score ~ hours_studied, data = study_data)
+
+# Tidy output using broom
+tidy(model)
+```
+
+### Visualize the Fitted Line
+
+```{r regression-line, fig.width=8, fig.height=5}
+ggplot(study_data, aes(x = hours_studied, y = test_score)) +
+  geom_point(alpha = 0.6, size = 3) +
+  geom_smooth(method = "lm", se = TRUE, color = "blue") +
+  labs(
+    title = "Linear Regression: Study Hours vs Test Score",
+    x = "Hours Studied",
+    y = "Test Score",
+    caption = "Blue line shows fitted regression with 95% confidence band"
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+## Reproducible Workflow Example
+
+A typical reproducible analysis follows these steps:
+
+```{r workflow-example, eval=FALSE}
+# 1. Load packages
+library(tidyverse)
+
+# 2. Import data
+data <- read_csv("data/my_data.csv")
+
+# 3. Explore data
+glimpse(data)
+summary(data)
+
+# 4. Visualize
+ggplot(data, aes(x = x, y = y)) +
+  geom_point()
+
+# 5. Fit model
+model <- lm(y ~ x, data = data)
+
+# 6. Check diagnostics
+plot(model)
+
+# 7. Summarize results
+tidy(model)
+glance(model)
+
+# 8. Document session info
+sessionInfo()
+```
+
+## Best Practices for This Course
+
+1. **Always use R Markdown**: Integrate code, output, and narrative
+2. **Comment your code**: Explain your reasoning
+3. **Use meaningful names**: `test_score` not `x1`
+4. **Follow tidyverse style**: Consistent, readable code
+5. **Check your work**: Run code chunks frequently
+6. **Document packages**: Include `sessionInfo()` at the end
+7. **Save raw data**: Never overwrite original files
+8. **Use relative paths**: Makes code portable
+
+## Summary
+
+Key concepts from this lecture:
+
+- **Reproducibility** is essential for good science and efficient work
+- **Tidyverse** provides a consistent framework for data analysis in R
+- **R Markdown** integrates code and narrative for literate programming
+- **Linear relationships** can be explored visually and quantified with correlation
+- **Linear regression** models the relationship between variables
+
+## Practice Exercises
+
+1. Create your own simulated dataset with a negative relationship between variables
+2. Calculate the correlation and visualize with a scatter plot
+3. Fit a simple linear regression and interpret the slope
+4. Document your entire analysis in an R Markdown document
+
+## Next Steps
+
+In the next lecture, we will:
+- Deep dive into data visualization with ggplot2
+- Learn advanced exploratory data analysis techniques
+- Understand different types of variables and relationships
+
+## References
+
+- Fox, J. (2016). *Applied Regression Analysis and Generalized Linear Models* (3rd ed.). Sage Publications.
+- Wickham, H., & Grolemund, G. (2017). *R for Data Science*. O'Reilly Media.
+- Wickham, H. (2014). Tidy Data. *Journal of Statistical Software*, 59(10), 1-23.
+
+## Session Information
+
+For reproducibility, here's information about the R session used to create this document:
+
+```{r session-info}
+sessionInfo()
+```
+
+---
+
+**Course Repository**: [github.com/crweber9874/linear_regression_class](https://github.com/crweber9874/linear_regression_class)
+
+**License**: CC BY-SA 4.0
