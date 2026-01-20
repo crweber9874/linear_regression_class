@@ -1,7 +1,7 @@
 ---
 title: "Introduction to Linear Regression"
 subtitle: "POL 682: Linear Regression Analysis"
-author: 
+author:
   - name: "Chris Weber"
     affiliation: "University of Arizona"
     email: "chrisweber@arizona.edu"
@@ -19,7 +19,10 @@ format:
     slide-number: true
     logo: "ua-logo.png"
     code-fold: true
-editor: visual
+    embed-resources: false
+resources:
+  - "*.png"
+editor: source
 knitr:
   opts_chunk:
     echo: true
@@ -29,11 +32,124 @@ knitr:
 note: |
   Instructor slides to accompany:
   Gujarati and Porter. 2009. Basic Econometrics.
-  
+
   Not to be distributed, shared, or cited without permission.
 ---
 
 # Introduction to Linear Regression
+
+## Welcome to the Course
+
+-   For today:
+-   Syllabus review, expectations and questions
+-   Getting started with `R` and `Github`
+-   Overview of the linear model
+
+
+# What is GitHub?
+
+## GitHub Overview
+
+**GitHub** is a web based platform to host data, source code, projects. It's useful for a variety of reasons, some perhaps more important than others in your own research.
+
+-   **Version Control**: Track changes to your code and documents
+-   **Collaboration**: Work with others on the same project
+-   **Project Management**: Organize tasks and track progress
+-   **Backup**: Store your work in the cloud
+-  **Questions, Instructions**
+
+------------------------------------------------------------------------
+
+## Why Use GitHub?
+
+### For Your Research
+
+-    GitHub makes computer code **transparent**, **reproducible**, and **collaborative**. It's transparent because it's open to the public, it's reproducible because it allows others to recreate and expand upon your work, and it's collaborative because it creates a platform for users to jointly contribute to a project.
+-   Version Control. It allows you to track every change you make. It's trivial to revert back to previous code.
+------------------------------------------------------------------------
+
+# Key Concepts
+
+## Repository (Repo)
+
+A **repository** is a folder that contains: - Your code files - Data files - Documentation (README.md) - Configuration files - Complete history of changes - Let's have a look at the structure of a repo
+
+### Example Structure
+
+```
+my_analysis/
+├── README.md
+├── data/
+│   ├── raw_data.csv
+│   └── processed_data.csv
+├── code/
+│   ├── 01_load_data.R
+│   ├── 02_analysis.R
+│   └── 03_visualize.R
+└── output/
+    ├── figures/
+    └── tables/
+```
+
+------------------------------------------------------------------------
+
+## Setup
+
+-   Create an account at [github.com](https://github.com)
+-   Log into your account
+-   Search for this repository, fork it to your account, and clone it to your computer
+-   And, create a sample repository to practice with.
+
+## `RStudio`
+
+-   Generally you should work from the terminal to use Git commands.
+-   You can access the terminal from within RStudio: **Tools** $\rightarrow$ **Terminal** $\rightarrow$ **New Terminal**
+-   Alternatively, when using RStudio, you can use the **Git** tab to perform Git operations via a graphical interface, the `Git` tab.
+- We'll use `Git` a lot in this course, but instead of an exhaustive presentation at the beginning, let's take things in steps, starting with accessing the files for this course.
+
+------------------------------------------------------------------------
+
+### Step 1: Fork the Repository
+
+<img src="github1.png" width="80%">
+
+------------------------------------------------------------------------
+
+### Step 2: Clone to Your Computer
+
+<img src="github2.png" width="80%">
+
+------------------------------------------------------------------------
+
+### Step 3: Open in RStudio
+
+<img src="github3.png" width="80%">
+
+------------------------------------------------------------------------
+
+### Step 4: Work with Git in RStudio
+
+<img src="github4.png" width="80%">
+
+------------------------------------------------------------------------
+
+### Step 5: Push Your Changes
+
+<img src="github5.png" width="80%">
+
+------------------------------------------------------------------------
+
+## The Linear Regression Model
+
+Linear regression is one of the most widely used statistical methods for several reasons:
+
+::: incremental
+- **Straightforward and foundational** - ideal starting point for advanced techniques
+- **Data Exploration  and Inference** - descriptive analysis, exploratory data analysis, inference
+- **Practical utility** - hypothesis testing and predictive modeling
+:::
+
+
 
 ## A Linear Model
 
@@ -46,9 +162,7 @@ $$y_i = \alpha + \beta x_i$$
 
 -   **Slope** ($\beta$): The change in $y$ for every unit change in $x$. Formally: $\frac{\partial y}{\partial x} = \beta$
 
-### Example
-
-$$y_{\text{RepublicanCandidate}} = \alpha + \beta_1 x_{\text{PID}}$$
+-  Examples.....
 
 ------------------------------------------------------------------------
 
@@ -88,45 +202,9 @@ The two are intimately related, but we make several key assumptions in the regre
 
 -   **Dependent variable** (regressand): The outcome
 -   **Explanatory variable** (regressor): The predictor
--   The explanatory variable is **fixed and exogenous**; the dependent variable is **random and endogenous** *(Gujarati and Porter, p. 21)*
+-   The explanatory variable is **fixed and exogenous**; the dependent variable is **random and endogenous** *
 
 ------------------------------------------------------------------------
-
-## Randomization and Control
-
--   In some cases, $x$ can be manipulated through random assignment.
--   Assign units to a treatment or control condition.
--   **Gold standard**: Random assignment to treatment conditions.
-
-### Theoretical Advantage
-
-When units are randomly assigned to treatment: $$\text{cor}(x, \epsilon) = 0$$
-
-This is because confounding variables are theoretically unrelated to treatment assignment.
-
-This is a key assumption of the regression model that experiments naturally satisfy.
-
-------------------------------------------------------------------------
-
-## Treatment Effects
-
-Let $T_i$ represent assignment to a treatment condition:
-
-$$y_i = \alpha + \beta T_i + \epsilon_i$$
-
-Here, $\beta$ is the **treatment effect**, the **Average Treatment Effect (ATE)**:
-
-$$E(\beta) = E(\delta_i) = E(Y_{i,1} - Y_{i,0}) = E(Y_{i,1}) - E(Y_{i,0})$$
-
-### Important Note
-
-If the true model is $y_i = \alpha + \beta T_i + \omega x_i + \epsilon_i$ and $X$ and $T$ are correlated, then: $$\text{cor}(x, \epsilon) \neq 0$$
-
-Random assignment to $T$ theoretically ensures $\text{cor}(x, \epsilon) = 0$ because confounders are equally distributed across treatment groups.
-
-------------------------------------------------------------------------
-
-# Key Terms and Definitions
 
 ## Data Types
 
@@ -150,7 +228,6 @@ Random assignment to $T$ theoretically ensures $\text{cor}(x, \epsilon) = 0$ bec
 
 ## Variable Types
 
-*(Gujarati and Porter, p. 28)*
 
 | Type         | Zero Point | Distances   | Ordering | Examples                      |
 |---------------|---------------|---------------|---------------|---------------|
@@ -163,73 +240,48 @@ Random assignment to $T$ theoretically ensures $\text{cor}(x, \epsilon) = 0$ bec
 **Qualitative variables**: Ordinal and Nominal
 
 
-# What is GitHub?
+## The Linear Model
 
-## GitHub Basics
+The basic functional form:
 
-**GitHub** is a web-based platform for:
+$$y_i = \alpha + \beta x_i$$
 
-- **Version Control**: Track changes to your code and documents
-- **Collaboration**: Work with others on the same project
-- **Project Management**: Organize tasks and track progress
-- **Backup**: Store your work in the cloud
-- **Portfolio**: Showcase your work to employers and collaborators
+Where:
 
-### Key Insight
-GitHub makes your code **transparent**, **reproducible**, and **collaborative**.
+- $\alpha$ = **intercept** (value of $y$ when $x=0$)
+- $\beta$ = **slope** (change in $y$ for every unit change in $x$)
 
----
+More formally: $\partial y / \partial x = \beta$
 
-## Why Use GitHub?
+## The Stochastic Model
 
-### For Your Research
-- Version Control. It allows you to track every change you make. 
-- Collaboration. It allows you to easily share code and collaborate on projects.
-- Reproducibility. It helps ensure that your analyses can be reproduced by others.
-- Reversion. It allows you to revert to previous versions of your code.
+Real-world relationships are **stochastic** rather than **deterministic**
 
+$$y_i = \alpha + \beta x_i + \epsilon_i$$
 
----
+- $\epsilon_i$ = **error term**
+- Often assume: $\epsilon_i \sim N(0, \sigma^2)$
+  - Normally distributed
+  - Mean zero
+  - Constant variance $\sigma^2$
 
-# Key Concepts
+## Multiple Predictors
 
-## Repository (Repo)
+With multiple predictors:
 
-A **repository** is a folder that contains:
-- Your code files
-- Data files
-- Documentation (README.md)
-- Configuration files
-- Complete history of changes
-- Let's have a look at the structure of a repo
+$$y_i = \alpha + \beta_1 x_{1i} + \beta_2 x_{2i} + ... + \beta_k x_{ki} + \epsilon_i$$
 
-### Example Structure
-```
-my_analysis/
-├── README.md
-├── data/
-│   ├── raw_data.csv
-│   └── processed_data.csv
-├── code/
-│   ├── 01_load_data.R
-│   ├── 02_analysis.R
-│   └── 03_visualize.R
-└── output/
-    ├── figures/
-    └── tables/
-```
+Or more compactly:
 
----
+$$y_i = \alpha + \sum_{j=1}^{k} \beta_j x_{ji} + \epsilon_i$$
 
-## Setup
+## Conditional Distribution
 
-- Create an account at [github.com](https://github.com)
-- Log into your account
-- Search for this repository, fork it to your account, and clone it to your computer
-- And, create a sample repository to practice with.
+We model the **conditional distribution** of $y$ given $x$:
 
-## `RStudio`
+$$p(y | x_1, x_2, ..., x_k) = f(x_1, x_2, ..., x_k; \alpha, \beta_1, \beta_2, ..., \beta_k)$$
 
-- Generally you should work from the terminal to use Git commands.
-- You can access the terminal from within RStudio: **Tools** → **Terminal** → **New Terminal**
-- Alternatively, when using RStudio, you can use the **Git** tab to perform Git operations via a graphical interface, the `Git` tab.
+**Key Question:** What is the expected value of $y$ given $x_1, x_2, ..., x_k$?
+
+$$E(y | x_1, x_2, ..., x_k) = \alpha + \sum_{j=1}^{k} \beta_j x_{j}$$
+

@@ -20,7 +20,8 @@ Office Hours: T 12:00PM-1:30PM (and by appointment).
 
 **Meeting Location**
 
-Tuesdays 4:00PM - 6:30PM 
+Tuesdays 2:00PM - 4:30PM 
+
 SS 332
 
 ## Course Objectives
@@ -56,6 +57,10 @@ It is best to learn statistics by practicing statistics. In this class, you will
 **Textbook:**
 
 Fox, John. 2008. *Applied Regression Analysis and Generalized Linear Models.* Thousand Oaks, California: Sage.
+
+**Course Notes:**
+
+Please access the course notes here https://linereg.netlify.app/
 
 **Additional Readings:**
 
@@ -102,7 +107,7 @@ I tend to find that the most useful way to learn statistics is to practice stati
 
 **$\texttt{Github}$** 
 
-is a tool for version control and collaboration. You should create agithub user account during the first week, in addition to acquainting yourself with the service. Please also read some of the online tutorials regarding github and how to set it up with Rstudio orR. If you use an email other than your University of Arizona email, please let me know.
+is a tool for version control and collaboration. You should create a github user account during the first week, in addition to acquainting yourself with the service. Please also read some of the online tutorials regarding github and how to set it up with Rstudio or R. If you use an email other than your University of Arizona email, please let me know.
 
 
 ## DataCamp
@@ -171,27 +176,22 @@ Complete all assigned modules by the deadline.
 
 ## Course Schedule
 
-**Week 1 (1/13): Welcome and Introduction**
+
+**Week 1 (1/20): Introduction to Linear Regression**
 
 - **Topics**: The OLS estimator
 
-- **Reading**: Fox, Chapter 2
+- **Reading**: Fox, Chapter 2, 3 (1/2)
 
-**Week 2 (1/20): Introduction to Linear Regression**
-
-- **Topics**: The OLS estimator
-
-- **Reading**: Fox, Chapter 3
-
-**Week 3 (1/27): Estimation and Properties**
+**Week 2 (1/27): Estimation and Properties**
 
 - **Topics**: Properties of the OLS estimator
 
-- **Reading**: Fox, Chapter 5
+- **Reading**: Fox, Chapter 3 (1/2), Chapter 5
 
 - **Assignment 1**: Complete DataCamp modules, `Introduction to Git` and `Version Control` with Git.
 
-**Week 4 (2/3): Comments on Model Fit**
+**Week 3 (2/3): Comments on Model Fit**
 
 - **Topics**: R-squared and its interpretation
 
@@ -206,7 +206,7 @@ Complete all assigned modules by the deadline.
 - **Assignment 2**: Create a Github repository for your class project. Include a README file describing the project and the structure of the repository. Share the repository with the instructor (git: crweber9874). In the README be sure to develop a framework that is consistent with scientific transparency and reproducibility -- how will you ensure that your code is concise, readable, and your analysis is reproducible?: https://lib.arizona.edu/research/data/data-management/osf
 
 
-**Week 5 (2/10): Statistical Inference**
+**Week 4 (2/10): Statistical Inference**
 
 - Topics: Theoretical approaches to estimation and inference
 
@@ -214,7 +214,7 @@ Complete all assigned modules by the deadline.
 
 - **Assignment 3**: Complete DataCamp modules, `Simple Linear regression` and `Technical Conditions in Linear Regression` 
 
-**Week 6 (2/17): Inference, Continued**
+**Week 5 (2/17): Inference, Continued**
 
 - Topics: Inference in linear regression
 
@@ -222,7 +222,7 @@ Complete all assigned modules by the deadline.
 
 - **Assignment 4**: Complete DataCamp module, `Predictions and Model Objects` 
 
-**Week 7 (2/24): Multiple Variables**
+**Week 6 (2/24): Multiple Variables**
 
 - Topics: Inference in linear regression
 
@@ -232,35 +232,35 @@ Complete all assigned modules by the deadline.
 
 - **Midterm Project is Due**
 
-**Week 8 (3/3): Midterm Exam**
+**Week 7 (3/3): Midterm Exam**
 
-**Week 9 (3/17): Assumptions of the Linear Model**
+**Week 8 (3/17): Assumptions of the Linear Model**
 
 - Topics: GLM and Heteroskedasticity
 -
 Reading: Fox, Chapter 12 
 
-**Week 10 (3/24): Collinearity**
+**Week 9 (3/24): Collinearity**
 
 - Reading: Fox, Chapter 13
 
-**Week 11 (3/31): Influence**
+**Week 10 (3/31): Influence**
 
 - Reading: Fox, Chapter 11
 
-**Week 12 (4/7): Panel Data**
+**Week 11 (4/7): Panel Data**
 
 - Topics: Fixed effects, random effects, panel and time series data: Autocorrelation
 
 - Reading: Fox, Chapter 16 (First Half)
 
-**Week 13 (4/14): Panel Data, Continued**
+**Week 12 (4/14): Panel Data, Continued**
 
 - Topics: Fixed effects, random effects, panel and time series data: Autocorrelation
 
 - Reading: Fox, Chapter 16 (Second Half)
 
-**Week 14  (4/21): Generalized Linear Models**
+**Week 13  (4/21): Generalized Linear Models**
 
 - Topics: Introduction to maximum likelihood and the generalized linear model
 
@@ -268,13 +268,13 @@ Reading: Fox, Chapter 12
 
 - **Assignment 4**: Complete DataCamp modules, `GLMs, an extension of your regression toolbox`
 
-**Week 15 (4/28): Simulation and Inference**
+**Week 14 (4/28): Simulation and Inference**
 
 - Topics: Extension to maximum likelihood and the generalized linear model
 
 - Reading: Fox, Chapter 15 
 
-**Week 16 (5/5): Simulation and Inference**
+**Week 15 (5/5): Simulation and Inference**
 
 - Reading: Fox, Chapter 21 
 
