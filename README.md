@@ -1,4 +1,4 @@
-# Linear Regression Class Repository
+## Linear Regression Class Repository
 
 ## Overview
 
