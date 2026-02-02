@@ -1,6 +1,6 @@
 # Linear Regression Class Repository
 
-[![Launch RStudio](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/crweber9874/linear_regression_class/main?urlpath=rstudio)
+[![Launch RStudio](https://img.shields.io/badge/Launch-RStudio-blue?logo=rstudio)](https://mybinder.org/v2/gh/crweber9874/linear_regression_class/main?urlpath=rstudio)
 
 ## Overview
 
