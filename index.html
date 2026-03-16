@@ -4,78 +4,302 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>POL 682 &mdash; Linear Regression Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Palatino, Georgia, serif; max-width: 750px; margin: 60px auto; padding: 0 20px; color: #0C234B; line-height: 1.6; }
-    h1 { border-bottom: 2px solid #AB0520; padding-bottom: 10px; margin-bottom: 5px; }
-    h2 { color: #AB0520; margin-top: 30px; margin-bottom: 10px; font-size: 1.15em; }
-    .subtitle { color: #666; margin-top: 0; margin-bottom: 30px; }
-    table { width: 100%; border-collapse: collapse; margin: 10px 0 20px 0; }
-    th { text-align: left; padding: 8px 12px; background: #0C234B; color: white; font-size: 0.95em; }
-    td { padding: 8px 12px; border-bottom: 1px solid #ddd; }
-    tr:hover { background: #f5f5f5; }
-    a { color: #AB0520; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .week { color: #666; font-size: 0.85em; }
-    .resources { margin-top: 30px; padding-top: 15px; border-top: 1px solid #ddd; }
-    .resources a { margin-right: 20px; }
+    :root {
+      --ua-blue: #0C234B;
+      --ua-red: #AB0520;
+      --ua-red-light: #c8102e;
+      --bg: #fafafa;
+      --card-bg: #ffffff;
+      --text: #2c3e50;
+      --text-light: #6c757d;
+      --border: #e9ecef;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── Header Banner ── */
+    .header {
+      background: linear-gradient(135deg, var(--ua-blue) 0%, #1a3a6b 100%);
+      color: white;
+      padding: 50px 20px 40px;
+      text-align: center;
+    }
+    .header h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 2.4em;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .header .course-id {
+      font-size: 0.95em;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 12px;
+    }
+    .header .instructor {
+      font-size: 1.05em;
+      color: rgba(255,255,255,0.85);
+    }
+    .header .instructor span {
+      color: var(--ua-red-light);
+      font-weight: 600;
+    }
+    .accent-bar {
+      height: 4px;
+      background: linear-gradient(90deg, var(--ua-red) 0%, var(--ua-red-light) 50%, var(--ua-red) 100%);
+    }
+
+    /* ── Main Content ── */
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 30px 20px 60px;
+    }
+
+    /* ── Week Cards ── */
+    .week-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      overflow: hidden;
+      transition: box-shadow 0.2s ease;
+    }
+    .week-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .week-label {
+      background: var(--ua-blue);
+      color: white;
+      padding: 10px 20px;
+      font-size: 0.8em;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .week-label .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--ua-red-light);
+    }
+    .week-topic {
+      padding: 4px 20px 0;
+      font-size: 0.85em;
+      color: var(--text-light);
+      font-style: italic;
+    }
+    .lecture-list {
+      padding: 12px 20px 16px;
+    }
+    .lecture-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .lecture-item:last-child {
+      border-bottom: none;
+    }
+    .lecture-item a {
+      color: var(--ua-blue);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95em;
+      transition: color 0.15s ease;
+    }
+    .lecture-item a:hover {
+      color: var(--ua-red);
+    }
+    .lecture-item .slide-icon {
+      margin-right: 8px;
+      font-size: 0.9em;
+    }
+    .rpubs-link {
+      font-size: 0.8em;
+      color: var(--text-light);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 12px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .rpubs-link:hover {
+      border-color: var(--ua-red);
+      color: var(--ua-red);
+    }
+
+    /* ── Resources Footer ── */
+    .resources {
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 2px solid var(--border);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .resource-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 0.9em;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .resource-btn.primary {
+      background: var(--ua-blue);
+      color: white;
+    }
+    .resource-btn.primary:hover {
+      background: #1a3a6b;
+    }
+    .resource-btn.secondary {
+      background: white;
+      color: var(--ua-blue);
+      border: 1.5px solid var(--ua-blue);
+    }
+    .resource-btn.secondary:hover {
+      background: var(--ua-blue);
+      color: white;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.82em;
+      color: var(--text-light);
+    }
   </style>
 </head>
 <body>
-  <h1>POL 682 &mdash; Lecture Slides</h1>
-  <p class="subtitle">Linear Regression Analysis &middot; Christopher Weber, PhD &middot; University of Arizona</p>
 
-  <h2>Week 1: Introduction to Linear Regression</h2>
-  <table>
-    <tr>
-      <td><a href="lectures/Introduction_to_Linear_Regression.html">Introduction to Linear Regression</a></td>
-      <td><a href="https://rpubs.com/crweber9874/linereg1">RPubs</a></td>
-    </tr>
-  </table>
+  <div class="header">
+    <div class="course-id">POL 682</div>
+    <h1>Linear Regression Analysis</h1>
+    <p class="instructor">
+      <span>Christopher Weber, PhD</span> &middot;
+      School of Government and Public Policy &middot;
+      University of Arizona
+    </p>
+  </div>
+  <div class="accent-bar"></div>
 
-  <h2>Weeks 2&ndash;4: Estimation and Properties</h2>
-  <table>
-    <tr>
-      <td><a href="lectures/ols_estimator.html">Derivation of OLS Estimator</a></td>
-      <td><a href="https://rpubs.com/crweber9874/1390443">RPubs</a></td>
-    </tr>
-    <tr>
-      <td><a href="lectures/OLS_Derivation.html">OLS Derivation (Detailed Notes)</a></td>
-      <td><a href="https://rpubs.com/crweber9874/1390453">RPubs</a></td>
-    </tr>
-    <tr>
-      <td><a href="lectures/gauss_markov_slides.html">Gauss-Markov Assumptions</a></td>
-      <td><a href="https://rpubs.com/crweber9874/gm_assumptions">RPubs</a></td>
-    </tr>
-  </table>
+  <div class="container">
 
-  <h2>Week 5: Matrix Algebra</h2>
-  <table>
-    <tr>
-      <td><a href="lectures/linear_regression_matrix_algebra.html">Linear Regression and Matrix Algebra</a></td>
-      <td><a href="https://rpubs.com/crweber9874/intro_matrices">RPubs</a></td>
-    </tr>
-  </table>
+    <!-- Week 1 -->
+    <div class="week-card">
+      <div class="week-label"><span class="dot"></span> Week 1</div>
+      <div class="week-topic">The OLS Estimator &middot; Fox, Chapters 2 &amp; 3</div>
+      <div class="lecture-list">
+        <div class="lecture-item">
+          <a href="lectures/Introduction_to_Linear_Regression.html">
+            <span class="slide-icon">&#9654;</span>Introduction to Linear Regression
+          </a>
+          <a href="https://rpubs.com/crweber9874/linereg1" class="rpubs-link">RPubs</a>
+        </div>
+      </div>
+    </div>
 
-  <h2>Week 6: Multiple Regression</h2>
-  <table>
-    <tr>
-      <td><a href="lectures/multiple_regression.html">Multiple Regression</a></td>
-      <td><a href="https://rpubs.com/crweber9874/Matrices_and_Fit">RPubs</a></td>
-    </tr>
-  </table>
+    <!-- Weeks 2-4 -->
+    <div class="week-card">
+      <div class="week-label"><span class="dot"></span> Weeks 2 &ndash; 4</div>
+      <div class="week-topic">Properties of the OLS Estimator &middot; Fox, Chapters 5 &amp; 6</div>
+      <div class="lecture-list">
+        <div class="lecture-item">
+          <a href="lectures/ols_estimator.html">
+            <span class="slide-icon">&#9654;</span>Derivation of OLS Estimator
+          </a>
+          <a href="https://rpubs.com/crweber9874/1390443" class="rpubs-link">RPubs</a>
+        </div>
+        <div class="lecture-item">
+          <a href="lectures/OLS_Derivation.html">
+            <span class="slide-icon">&#9654;</span>OLS Derivation (Detailed Notes)
+          </a>
+          <a href="https://rpubs.com/crweber9874/1390453" class="rpubs-link">RPubs</a>
+        </div>
+        <div class="lecture-item">
+          <a href="lectures/gauss_markov_slides.html">
+            <span class="slide-icon">&#9654;</span>Gauss-Markov Assumptions
+          </a>
+          <a href="https://rpubs.com/crweber9874/gm_assumptions" class="rpubs-link">RPubs</a>
+        </div>
+      </div>
+    </div>
 
-  <h2>Week 7: Dummy Variables and Model Fit</h2>
-  <table>
-    <tr>
-      <td><a href="lectures/dummy_variables_model_fit.html">Dummy Variables and Model Fit</a></td>
-      <td></td>
-    </tr>
-  </table>
+    <!-- Week 5 -->
+    <div class="week-card">
+      <div class="week-label"><span class="dot"></span> Week 5</div>
+      <div class="week-topic">Vectors, Matrices, and the OLS Estimator in Matrix Form</div>
+      <div class="lecture-list">
+        <div class="lecture-item">
+          <a href="lectures/linear_regression_matrix_algebra.html">
+            <span class="slide-icon">&#9654;</span>Linear Regression and Matrix Algebra
+          </a>
+          <a href="https://rpubs.com/crweber9874/intro_matrices" class="rpubs-link">RPubs</a>
+        </div>
+      </div>
+    </div>
 
-  <div class="resources">
-    <a href="https://github.com/crweber9874/linear_regression_class">GitHub Repository</a>
-    <a href="https://linereg.netlify.app/">Course Notes</a>
-    <a href="https://rpubs.com/crweber9874">RPubs Collection</a>
+    <!-- Week 6 -->
+    <div class="week-card">
+      <div class="week-label"><span class="dot"></span> Week 6</div>
+      <div class="week-topic">Multiple Predictors and Matrix Algebra &middot; Fox, Chapter 9</div>
+      <div class="lecture-list">
+        <div class="lecture-item">
+          <a href="lectures/multiple_regression.html">
+            <span class="slide-icon">&#9654;</span>Multiple Regression
+          </a>
+          <a href="https://rpubs.com/crweber9874/Matrices_and_Fit" class="rpubs-link">RPubs</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Week 7 -->
+    <div class="week-card">
+      <div class="week-label"><span class="dot"></span> Week 7</div>
+      <div class="week-topic">Dummy Variables, R&sup2;, Cross-Validation, and the Achen Debate</div>
+      <div class="lecture-list">
+        <div class="lecture-item">
+          <a href="lectures/dummy_variables_model_fit.html">
+            <span class="slide-icon">&#9654;</span>Dummy Variables and Model Fit
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resources -->
+    <div class="resources">
+      <a href="https://github.com/crweber9874/linear_regression_class" class="resource-btn primary">GitHub Repository</a>
+      <a href="https://linereg.netlify.app/" class="resource-btn secondary">Course Notes</a>
+      <a href="https://rpubs.com/crweber9874" class="resource-btn secondary">RPubs Collection</a>
+    </div>
+
+    <p class="footer-note">
+      Spring 2026 &middot; School of Government and Public Policy &middot; University of Arizona
+    </p>
+
   </div>
 </body>
 </html>
