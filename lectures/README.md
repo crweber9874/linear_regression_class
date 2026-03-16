@@ -18,6 +18,7 @@ This directory contains lecture materials for POL 682. All lectures are written 
 | Gauss-Markov Assumptions | [gauss_markov_slides.qmd](gauss_markov_slides.qmd) | [RPubs](https://rpubs.com/crweber9874/gm_assumptions) |
 | Linear Regression and Matrix Algebra | [linear_regression_matrix_algebra.qmd](linear_regression_matrix_algebra.qmd) | [RPubs](https://rpubs.com/crweber9874/intro_matrices) |
 | Multiple Regression | [multiple_regression.qmd](multiple_regression.qmd) | [RPubs](https://rpubs.com/crweber9874/Matrices_and_Fit)|
+| Dummy Variables and Model Fit | [dummy_variables_model_fit.qmd](dummy_variables_model_fit.qmd) | |
 
 
 
@@ -39,7 +40,11 @@ This directory contains lecture materials for POL 682. All lectures are written 
 - **Files**: [linear_regression_matrix_algebra.qmd](linear_regression_matrix_algebra.qmd)
 
 ### Week 6: Multiple Regression
-- **Topics**: Multiple Predictors, Dummy Variables, and Model Fit
+- **Topics**: Multiple Predictors and Matrix Algebra
 - **Files**: [multiple_regression.qmd](multiple_regression.qmd)
+
+### Week 7: Dummy Variables and Model Fit
+- **Topics**: Dummy Variables, R-squared, Cross-Validation, and the Achen Debate
+- **Files**: [dummy_variables_model_fit.qmd](dummy_variables_model_fit.qmd)
 
 

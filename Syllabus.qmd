@@ -208,7 +208,9 @@ Complete all assigned modules by the deadline.
 - **Reading**: Fox, Chapter 9 (Optional: Chapter 10)
 - **Recommended DataCamp Module**: `Introduction to Linear Algebra`
 - **Midterm Project is Due**
-- **Slides**: [multiple_regression.qmd](lectures/multiple_regression.qmd) | [RPubs](https://rpubs.com/crweber9874/Matrices_and_Fit)
+- **Slides**:
+  - [multiple_regression.qmd](lectures/multiple_regression.qmd) | [RPubs](https://rpubs.com/crweber9874/Matrices_and_Fit)
+  - [dummy_variables_model_fit.qmd](lectures/dummy_variables_model_fit.qmd)
 
 ### Week 7 (3/3): Midterm Exam
 

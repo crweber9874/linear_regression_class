@@ -12,3 +12,4 @@ docs
 buildEncryption.R
 *.rda
 .enc
+exam/
