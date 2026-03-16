@@ -1,0 +1,15 @@
+.Rproj.user
+.Rhistory
+.Ruserdata
+.Renv
+.Rdata
+.httr-oauth
+.DS_Store
+.quarto
+*.key
+*.pub
+*.rda
+.enc
+exam/
+renv/
+rsconnect/
