@@ -1,0 +1,594 @@
+---
+title: "Derivation of OLS Estimator"
+subtitle: "POL 682: Linear Regression Analysis"
+author:
+  - name: "Christopher Weber, PhD"
+    affiliation: "University of Arizona"
+    email: "chrisweber@arizona.edu"
+institute: "School of Government and Public Policy"
+date: today
+format:
+  revealjs:
+    theme: default
+    transition: slide
+    background-transition: fade
+    height: 1080
+    width: 1920
+    margin: 0.1
+    footer: "POL 682 | Introduction to Linear Regression"
+    slide-number: true
+    code-fold: true
+    embed-resources: false
+    html-math-method: mathjax
+resources:
+  - "*.png"
+editor: source
+knitr:
+  opts_chunk:
+    echo: true
+    warning: false
+    message: false
+
+note: |
+  Instructor slides to accompany:
+  Fox. 2009. Applied Regression Analysis
+
+  Not to be distributed, shared, or cited without permission.
+---
+
+## The Regression Functions
+
+**Population Regression Function (PRF)**
+
+$$Y_i = \alpha+\beta X_i + \epsilon_i$$
+
+**Sample Regression Function (SRF)**
+
+$$Y_i = a+b X_i + e_i$$
+
+::: {.notes}
+The SRF estimates the PRF using sample data
+:::
+
+## Understanding the Error Term
+
+Rearranging the SRF reveals the error:
+
+$$Y_i-\overbrace{(a+b X_i)}^{\hat{Y}_{i}}=e_i$$
+
+- $\hat{Y}_i$ = **predicted value** (regression line/plane)
+- $e_i$ = **residual** (observed - predicted)
+- **Goal**: Find a line that minimizes $e$
+
+## Does Ice Cream Kill?
+
+Consider a hypothetical study (with fictitious data)
+
+::: incremental
+- Researcher collects monthly data on:
+  - **Ice cream consumption** (lbs/capita)
+  - **Child fatalities** (deaths/month)
+- Discovers a strong positive correlation
+- Regression line significantly different from zero
+- Concludes: Ice cream consumption is dangerous!
+:::
+
+::: {.fragment}
+**Question**: Is this a causal relationship?
+:::
+
+## The Spurious Correlation
+
+```{r}
+#| echo: false
+#| warning: false
+#| fig-width: 14
+#| fig-height: 8
+library(DiagrammeR)
+
+grViz("
+digraph naive {
+  graph [rankdir = LR, bgcolor = transparent, size='8,4!']
+  node [shape = box, style = filled, fillcolor = white, fontname = Calibri, width=2.5, height=1.2, fontsize=16]
+
+  IceCream [label = 'Ice Cream\\nConsumption']
+  Deaths [label = 'Child\\nFatalities']
+
+  IceCream -> Deaths [label = '?', color = black, penwidth = 2, fontsize=20]
+}
+")
+```
+
+## The Data
+
+```{r}
+#| echo: false
+#| warning: false
+#| fig-width: 18
+#| fig-height: 10
+library(plotly)
+library(MASS)
+
+set.seed(123)
+n <- 500
+mu <- c(1.5, 25)
+sigma <- matrix(c(0.25, 1.5, 1.5, 25), nrow = 2)
+data <- mvrnorm(n = n, mu = mu, Sigma = sigma)
+
+ice_cream <- data[, 1]
+fatalities <- data[, 2]
+
+valid_idx <- ice_cream >= 0 & fatalities >= 0
+ice_cream <- ice_cream[valid_idx]
+fatalities <- fatalities[valid_idx]
+
+fit <- lm(fatalities ~ ice_cream)
+pred_line <- predict(fit)
+
+intercept <- coef(fit)[1]
+slope <- coef(fit)[2]
+r_squared <- summary(fit)$r.squared
+
+equation_text <- paste0(
+  "Y = ", round(intercept, 2), " + ", round(slope, 2), "X<br>",
+  "R² = ", round(r_squared, 3)
+)
+
+hover_text <- paste0(
+  "Ice Cream: ", round(ice_cream, 2), " lbs/capita/month<br>",
+  "Child Fatalities: ", round(fatalities, 0), " deaths/month<br>",
+  "Residual: ", round(fatalities - pred_line, 2)
+)
+
+plot_ly() %>%
+  add_segments(
+    x = ~ice_cream,
+    xend = ~ice_cream,
+    y = ~fatalities,
+    yend = ~pred_line,
+    line = list(color = "lightgrey", width = 1),
+    showlegend = FALSE,
+    hoverinfo = "skip"
+  ) %>%
+  add_trace(
+    x = ~ice_cream,
+    y = ~pred_line,
+    type = "scatter",
+    mode = "lines",
+    line = list(color = "darkred", width = 3),
+    name = "Regression Line",
+    hoverinfo = "skip"
+  ) %>%
+  add_trace(
+    x = ~ice_cream,
+    y = ~fatalities,
+    type = "scatter",
+    mode = "markers",
+    marker = list(
+      size = 12,
+      color = "steelblue",
+      opacity = 0.6,
+      line = list(color = "darkblue", width = 1)
+    ),
+    text = hover_text,
+    hoverinfo = "text",
+    name = "Observed"
+  ) %>%
+  layout(
+    width = 1600,
+    height = 800,
+    xaxis = list(title = "Ice Cream Consumption (lbs/capita/month)"),
+    yaxis = list(title = "Child Fatalities per Month"),
+    showlegend = TRUE,
+    annotations = list(
+      list(
+        x = 0.02,
+        y = 0.98,
+        xref = "paper",
+        yref = "paper",
+        text = equation_text,
+        showarrow = FALSE,
+        xanchor = "left",
+        yanchor = "top",
+        font = list(size = 14, color = "darkred"),
+        bgcolor = "rgba(255, 255, 255, 0.9)",
+        bordercolor = "darkred",
+        borderwidth = 2,
+        borderpad = 8
+      )
+    )
+  )
+```
+
+## Confounding Variables 
+
+**The Purported versus Real Story**: Ice cream doesn't *cause* child deaths
+
+This is a **spurious correlation** - both variables are influenced by a confounder
+
+```{r}
+#| echo: false
+#| warning: false
+#| fig-width: 14
+#| fig-height: 8
+grViz("
+digraph temp {
+  graph [rankdir = TB, bgcolor = transparent, size='8,4!']
+  node [shape = box, style = filled, fillcolor = lightblue, fontname = Calibri, width=2.5, height=1.2, fontsize=16]
+
+  Temp [label = 'Summer\\nTemperature', fillcolor = orange]
+  IceCream [label = 'Ice Cream\\nConsumption']
+  Deaths [label = 'Child\\nFatalities']
+
+  Temp -> IceCream [penwidth = 3]
+  Temp -> Deaths [penwidth = 3]
+}
+")
+```
+
+::: {.fragment}
+Summer → ↑ Ice cream consumption
+Summer → ↑ Swimming/outdoor activities → ↑ Child fatalities
+:::
+
+## Correlation ≠ Causation
+
+::: incremental
+- Before interpreting regression coefficients as **causal**, consider:
+  - What is the **causal structure**?
+  - Are there potential **confounders**?
+  - Are there **omitted variables**?
+- Regression shows **association**, not necessarily **causation**
+:::
+
+## Back to Minimizing Error
+
+Why not just minimize $\sum_{i=1}^n e_i$?
+
+::: {.fragment}
+**Problem**: Any line through $(\bar{X}, \bar{Y})$ gives:
+
+$$\sum e_i=\sum [(Y_i - \bar{Y})] = 0$$
+:::
+
+::: {.fragment}
+**Alternatives**:
+
+- Use $|e|$ → **Absolute Value Regression** (later in semester)
+- Use $e^2$ → **Ordinary Least Squares** (today!)
+:::
+
+## The OLS Principle
+
+Minimize the **Sum of Squared Residuals (SSR)**:
+
+$$\text{min} \sum_{i=1}^n e_i^2$$
+
+Equivalently:
+
+$$SSR = \sum_{i=1}^n e_i^2=\sum_{i=1}^n(Y_i-a-bX_i)^2$$
+
+We solve for $a$ and $b$ that minimize SSR
+
+## Visual Representation
+
+```{r}
+#| echo: false
+#| warning: false
+#| fig-width: 18
+#| fig-height: 10
+library(plotly)
+library(MASS)
+
+set.seed(456)
+n <- 100
+mu <- c(5, 10)
+sigma <- matrix(c(2, 3, 3, 8), nrow = 2)
+data <- mvrnorm(n = n, mu = mu, Sigma = sigma)
+
+x_var <- data[, 1]
+y_var <- data[, 2]
+
+valid_idx <- x_var >= 0 & y_var >= 0
+x_var <- x_var[valid_idx]
+y_var <- y_var[valid_idx]
+
+fit <- lm(y_var ~ x_var)
+pred_line <- predict(fit)
+
+intercept <- coef(fit)[1]
+slope <- coef(fit)[2]
+r_squared <- summary(fit)$r.squared
+
+equation_text <- paste0(
+  "Y = ", round(intercept, 2), " + ", round(slope, 2), "X<br>",
+  "R² = ", round(r_squared, 3)
+)
+
+hover_text <- paste0(
+  "X: ", round(x_var, 2), "<br>",
+  "Y: ", round(y_var, 2), "<br>",
+  "Residual: ", round(y_var - pred_line, 2)
+)
+
+plot_ly() %>%
+  add_segments(
+    x = ~x_var,
+    xend = ~x_var,
+    y = ~y_var,
+    yend = ~pred_line,
+    line = list(color = "lightgrey", width = 1),
+    showlegend = FALSE,
+    hoverinfo = "skip"
+  ) %>%
+  add_trace(
+    x = ~x_var,
+    y = ~pred_line,
+    type = "scatter",
+    mode = "lines",
+    line = list(color = "darkred", width = 3),
+    name = "Regression Line",
+    hoverinfo = "skip"
+  ) %>%
+  add_trace(
+    x = ~x_var,
+    y = ~y_var,
+    type = "scatter",
+    mode = "markers",
+    marker = list(
+      size = 14,
+      color = "steelblue",
+      opacity = 0.6,
+      line = list(color = "darkblue", width = 1)
+    ),
+    text = hover_text,
+    hoverinfo = "text",
+    name = "Observed"
+  ) %>%
+  layout(
+    width = 1600,
+    height = 800,
+    xaxis = list(title = "X"),
+    yaxis = list(title = "Y"),
+    showlegend = TRUE,
+    annotations = list(
+      list(
+        x = 0.02,
+        y = 0.98,
+        xref = "paper",
+        yref = "paper",
+        text = equation_text,
+        showarrow = FALSE,
+        xanchor = "left",
+        yanchor = "top",
+        font = list(size = 14, color = "darkred"),
+        bgcolor = "rgba(255, 255, 255, 0.9)",
+        bordercolor = "darkred",
+        borderwidth = 2,
+        borderpad = 8
+      )
+    )
+  )
+```
+
+## Deriving the OLS Estimator
+
+We have two unknowns: $a$ and $b$
+
+Take partial derivatives of SSR and set to zero:
+
+$$\frac{\partial SSR}{\partial a}=-2\sum(Y_i-a-bX_i)=0$$
+
+$$\frac{\partial SSR}{\partial b}=-2\sum(Y_i-a-bX_i)X_i=0$$
+
+## The Intercept Formula
+
+Setting $\frac{\partial SSR}{\partial a} = 0$:
+
+$$\begin{align}
+0 &= -2 \sum (Y_i-a-bX_i) \\
+0 &= \sum Y_i-na-b \sum X_i \\
+na &= \sum Y_i - b \sum X_i \\
+a &= \frac{\sum Y_i}{n} - b\frac{\sum X_i}{n} \\
+a &= \bar{Y} - b \bar{X}
+\end{align}$$
+
+**Key insight**: The regression line passes through $(\bar{X}, \bar{Y})$
+
+## The Slope Formula 
+
+Setting $\frac{\partial SSR}{\partial b} = 0$:
+
+$$\begin{align}
+0 &= \sum (Y_i-a-bX_i)(-X_i) \\
+0 &= \sum X_i Y_i - a \sum X_i - b\sum X_i^2 \\
+b &= \frac{\sum X_iY_i-n \bar{X}\bar{Y}}{\sum X_i^2-n\bar{X}^2}
+\end{align}$$
+
+Alternative form (using deviations):
+
+$$b = \frac{\sum x_i y_i}{\sum x_i^2}$$
+
+where $x_i=X_i-\bar{X}$ and $y_i=Y_i-\bar{Y}$
+
+## The Normal Equations
+
+The two equations we solved:
+
+$$\sum Y_i = na + b\sum X_i$$
+
+$$\sum X_i Y_i = a \sum X_i + b\sum X_i^2$$
+
+These are the **normal equations** for OLS
+
+::: {.notes}
+These give us the formulas for a and b that minimize the sum of squared residuals
+:::
+
+## Important Properties
+
+From the OLS derivation, we get:
+
+::: incremental
+1. **$\sum e_i = 0$**
+   The sum of residuals is zero (line passes through means)
+
+2. **$\sum X_i e_i = 0$**
+   The covariance between X and the error is zero
+:::
+
+::: {.fragment}
+**Critical assumption**: $Cov(X, \epsilon) = 0$
+
+This is **built into** the OLS estimator but may not hold in reality!
+:::
+
+## When the Assumption Fails 
+
+The assumption $\sum X_i e_i = 0$ can be violated when:
+
+::: incremental
+- **Omitted variable bias**: Excluded variables correlated with X
+- **Measurement error**: Error in measuring X
+- **Simultaneity**: X and Y jointly determined
+- **Confounding**: Unobserved variables affect both X and Y
+:::
+
+::: {.fragment}
+**Consequence**: Estimates are **biased** and **inconsistent**
+:::
+
+## Conditional Expectation
+
+The regression line represents a **conditional mean**:
+
+$$\hat{Y} = E(Y_i | X_i) = a + b X_i$$
+
+::: {.fragment}
+**If X and Y are independent**: $E(Y_i | X_i) = E(Y_i) = \bar{Y}$
+
+- The slope $b = 0$
+- Knowing X doesn't help predict Y
+:::
+
+## Partitioning Variance
+
+We can decompose the total variation in Y:
+
+$$\underbrace{\sum (Y_i-\bar{Y})^2}_{\text{TSS}} = \underbrace{\sum (Y_i-\hat{Y})^2}_{\text{RSS}} + \underbrace{\sum (\hat{Y}-\bar{Y})^2}_{\text{RegSS}}$$
+
+Where:
+
+- **TSS** = Total Sum of Squares
+- **RSS** = Residual Sum of Squares
+- **RegSS** = Regression Sum of Squares
+
+## R-squared: Goodness of Fit
+
+**Coefficient of Determination**:
+
+$$R^2 = \frac{\text{RegSS}}{\text{TSS}} = 1 - \frac{\text{RSS}}{\text{TSS}}$$
+
+::: incremental
+- $R^2 \in [0, 1]$
+- Proportion of variance in Y **explained** by X
+- $R^2 = 0$: X explains nothing
+- $R^2 = 1$: X perfectly predicts Y
+:::
+
+## Relationship to Correlation
+
+In simple linear regression:
+
+$$R^2 = r^2$$
+
+where $r$ is the **Pearson correlation coefficient**
+
+::: incremental
+- $r = \sqrt{R^2}$ for positive relationships
+- $r = -\sqrt{R^2}$ for negative relationships
+- $r$ is a **standardized** measure of covariance
+:::
+
+## Key Assumptions {.smaller}
+
+For OLS to be **unbiased** and **efficient**:
+
+::: incremental
+1. **Linearity**: $E(Y_i | X_i) = \alpha + \beta X_i$
+   - Linear in *parameters*, not necessarily variables
+   - Can estimate $Y = a + bX^2$, but not $Y = a + b^2X$
+
+2. **Exogeneity**: $Cov(X, \epsilon) = 0$
+   - No correlation between X and error
+
+3. **Homoscedasticity**: $Var(\epsilon_i) = \sigma^2$
+   - Constant variance
+
+4. **Independence**: Observations are independent
+:::
+
+## Linearity in Parameters
+
+::: columns
+::: {.column width="50%"}
+**OK** ✓
+
+- $Y = a + bX$
+- $Y = a + bX^2$
+- $Y = a + b\log(X)$
+- $Y = a + b_1X + b_2X^2$
+:::
+
+::: {.column width="50%"}
+**NOT OK** ✗
+
+- $Y = a + b^2X$
+- $Y = a^b X$
+- $Y = e^{bX}$
+
+(Need different estimation methods)
+:::
+:::
+
+## Population vs. Sample
+
+Remember the distinction:
+
+::: columns
+::: {.column width="50%"}
+**Population (PRF)**
+
+$$Y_i = \alpha + \beta X_i + \epsilon_i$$
+
+- True parameters
+- Unknown
+- What we want
+:::
+
+::: {.column width="50%"}
+**Sample (SRF)**
+
+$$Y_i = a + b X_i + e_i$$
+
+- Estimates
+- Calculated from data
+- What we observe
+:::
+:::
+
+## Sampling Distribution
+
+If we repeatedly sample and estimate:
+
+::: incremental
+- We get many SRFs: $\text{SRF}_1, \text{SRF}_2, ..., \text{SRF}_n$
+- Each has different $a$ and $b$
+- The **distribution** of these estimates:
+  - Is centered on true values (unbiased)
+  - Has variance that decreases with sample size
+- We use this distribution for **inference**
+:::
+
+
+

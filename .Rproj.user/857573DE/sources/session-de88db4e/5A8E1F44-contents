@@ -1,0 +1,51 @@
+---
+title: "Lecture Slides Index"
+subtitle: "POL 682: Linear Regression Analysis"
+author: "Christopher Weber, PhD"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+---
+
+# Course Lectures
+
+This page provides links to all lecture materials for POL 682. Schedule follows the [course syllabus](../Syllabus.pdf).
+
+## Quick Links
+
+| Lecture | File | RPubs |
+|---------|------|-------|
+| Introduction to Linear Regression | [Introduction_to_Linear_Regression.qmd](Introduction_to_Linear_Regression.qmd) | [RPubs](https://rpubs.com/crweber9874/linereg1) |
+| Derivation of OLS Estimator | [ols_estimator.qmd](ols_estimator.qmd) | [RPubs](https://rpubs.com/crweber9874/1390443) |
+| OLS Derivation (Detailed Notes) | [OLS_Derivation.qmd](OLS_Derivation.qmd) | [RPubs](https://rpubs.com/crweber9874/1390453) |
+| Gauss-Markov Assumptions | [gauss_markov_slides.qmd](gauss_markov_slides.qmd) | [RPubs](https://rpubs.com/crweber9874/gm_assumptions) |
+| Linear Regression and Matrix Algebra | [linear_regression_matrix_algebra.qmd](linear_regression_matrix_algebra.qmd) | [RPubs](https://rpubs.com/crweber9874/matrix) |
+| Multiple Regression | [multiple_regression.qmd](multiple_regression.qmd) | [RPubs](https://rpubs.com/crweber9874/Matrices_and_Fit ) |
+
+
+
+## Course Schedule
+
+### Week 1: Introduction to Linear Regression
+- **Topics**: The OLS estimator
+- **Reading**: Fox, Chapters 2, 3 (first half)
+- **Files**: [Introduction_to_Linear_Regression.qmd](Introduction_to_Linear_Regression.qmd)
+
+### Weeks 2-3: Estimation and Properties
+- **Topics**: Properties of the OLS estimator
+- **Files**: [ols_estimator.qmd](ols_estimator.qmd), [OLS_Derivation.qmd](OLS_Derivation.qmd), [gauss_markov_slides.qmd](gauss_markov_slides.qmd)
+
+### Week 4: Matrix Algebra
+- **Topics**: Vectors, Matrices, and the OLS Estimator in Matrix Form
+- **Files**: [linear_regression_matrix_algebra.qmd](linear_regression_matrix_algebra.qmd)
+
+### Week 5: Multiple Regression
+- **Topics**: Multiple Predictors, Dummy Variables, and Model Fit
+- **Files**: [multiple_regression.qmd](multiple_regression.qmd)
+
+## External Resources
+
+- [Course GitHub Repository](https://github.com/crweber9874/linear_regression_class)
+- [Course Notes](https://linereg.netlify.app/)
+- [RPubs Collection](https://rpubs.com/crweber9874)

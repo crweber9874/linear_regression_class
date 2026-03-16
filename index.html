@@ -3,23 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>POL 682 — Lecture Slides</title>
+  <title>POL 682 &mdash; Linear Regression Analysis</title>
   <style>
-    body { font-family: Palatino, Georgia, serif; max-width: 700px; margin: 60px auto; padding: 0 20px; color: #0C234B; }
-    h1 { border-bottom: 2px solid #AB0520; padding-bottom: 10px; }
-    ul { list-style: none; padding: 0; }
-    li { margin: 12px 0; }
-    a { color: #AB0520; text-decoration: none; font-size: 1.1em; }
+    body { font-family: Palatino, Georgia, serif; max-width: 750px; margin: 60px auto; padding: 0 20px; color: #0C234B; line-height: 1.6; }
+    h1 { border-bottom: 2px solid #AB0520; padding-bottom: 10px; margin-bottom: 5px; }
+    h2 { color: #AB0520; margin-top: 30px; margin-bottom: 10px; font-size: 1.15em; }
+    .subtitle { color: #666; margin-top: 0; margin-bottom: 30px; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0 20px 0; }
+    th { text-align: left; padding: 8px 12px; background: #0C234B; color: white; font-size: 0.95em; }
+    td { padding: 8px 12px; border-bottom: 1px solid #ddd; }
+    tr:hover { background: #f5f5f5; }
+    a { color: #AB0520; text-decoration: none; }
     a:hover { text-decoration: underline; }
+    .week { color: #666; font-size: 0.85em; }
+    .resources { margin-top: 30px; padding-top: 15px; border-top: 1px solid #ddd; }
+    .resources a { margin-right: 20px; }
   </style>
 </head>
 <body>
-  <h1>POL 682 — Lecture Slides</h1>
-  <p>Linear Regression Analysis &middot; Christopher Weber, PhD &middot; University of Arizona</p>
-  <ul>
-    <li><a href="lectures/linear_regression_matrix_algebra.html">Linear Regression and Matrix Algebra</a></li>
-    <li><a href="lectures/multiple_regression.html">Multiple Regression</a></li>
-    <li><a href="lectures/dummy_variables_model_fit.html">Dummy Variables and Model Fit</a></li>
-  </ul>
+  <h1>POL 682 &mdash; Lecture Slides</h1>
+  <p class="subtitle">Linear Regression Analysis &middot; Christopher Weber, PhD &middot; University of Arizona</p>
+
+  <h2>Week 1: Introduction to Linear Regression</h2>
+  <table>
+    <tr>
+      <td><a href="lectures/Introduction_to_Linear_Regression.html">Introduction to Linear Regression</a></td>
+      <td><a href="https://rpubs.com/crweber9874/linereg1">RPubs</a></td>
+    </tr>
+  </table>
+
+  <h2>Weeks 2&ndash;4: Estimation and Properties</h2>
+  <table>
+    <tr>
+      <td><a href="lectures/ols_estimator.html">Derivation of OLS Estimator</a></td>
+      <td><a href="https://rpubs.com/crweber9874/1390443">RPubs</a></td>
+    </tr>
+    <tr>
+      <td><a href="lectures/OLS_Derivation.html">OLS Derivation (Detailed Notes)</a></td>
+      <td><a href="https://rpubs.com/crweber9874/1390453">RPubs</a></td>
+    </tr>
+    <tr>
+      <td><a href="lectures/gauss_markov_slides.html">Gauss-Markov Assumptions</a></td>
+      <td><a href="https://rpubs.com/crweber9874/gm_assumptions">RPubs</a></td>
+    </tr>
+  </table>
+
+  <h2>Week 5: Matrix Algebra</h2>
+  <table>
+    <tr>
+      <td><a href="lectures/linear_regression_matrix_algebra.html">Linear Regression and Matrix Algebra</a></td>
+      <td><a href="https://rpubs.com/crweber9874/intro_matrices">RPubs</a></td>
+    </tr>
+  </table>
+
+  <h2>Week 6: Multiple Regression</h2>
+  <table>
+    <tr>
+      <td><a href="lectures/multiple_regression.html">Multiple Regression</a></td>
+      <td><a href="https://rpubs.com/crweber9874/Matrices_and_Fit">RPubs</a></td>
+    </tr>
+  </table>
+
+  <h2>Week 7: Dummy Variables and Model Fit</h2>
+  <table>
+    <tr>
+      <td><a href="lectures/dummy_variables_model_fit.html">Dummy Variables and Model Fit</a></td>
+      <td></td>
+    </tr>
+  </table>
+
+  <div class="resources">
+    <a href="https://github.com/crweber9874/linear_regression_class">GitHub Repository</a>
+    <a href="https://linereg.netlify.app/">Course Notes</a>
+    <a href="https://rpubs.com/crweber9874">RPubs Collection</a>
+  </div>
 </body>
 </html>

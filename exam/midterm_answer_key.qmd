@@ -1,0 +1,388 @@
+---
+title: "Midterm Exam — Answer Key"
+subtitle: "Linear Regression Analysis"
+author: "POL 682"
+date: "March 3, 2026"
+format:
+  pdf:
+    documentclass: article
+    papersize: letter
+    geometry:
+      - top=1in
+      - bottom=1in
+      - left=1.15in
+      - right=1.15in
+    fontsize: 11pt
+    mainfont: "Palatino"
+    monofont: "Menlo"
+    linestretch: 1.25
+    colorlinks: true
+    linkcolor: "darkblue"
+    urlcolor: "darkblue"
+    include-in-header:
+      text: |
+        \usepackage{fancyhdr}
+        \usepackage{titlesec}
+        \usepackage{xcolor}
+        \usepackage{enumitem}
+        \usepackage{tcolorbox}
+        \usepackage{etoolbox}
+
+        % ── Colors ──
+        \definecolor{uablue}{HTML}{0C234B}
+        \definecolor{uared}{HTML}{AB0520}
+        \definecolor{lightgray}{HTML}{F2F2F2}
+        \definecolor{answergreen}{HTML}{1B5E20}
+
+        % ── Header / Footer ──
+        \pagestyle{fancy}
+        \fancyhf{}
+        \fancyhead[L]{\small\textcolor{uablue}{\textbf{POL 682} — Midterm Exam \textcolor{uared}{ANSWER KEY}}}
+        \fancyhead[R]{\small\textcolor{uablue}{March 3, 2026}}
+        \fancyfoot[C]{\small\textcolor{gray}{Page \thepage}}
+        \renewcommand{\headrulewidth}{0.4pt}
+        \renewcommand{\footrulewidth}{0pt}
+
+        % ── Title page styling ──
+        \makeatletter
+        \renewcommand{\maketitle}{%
+          \begin{center}
+            {\color{uablue}\rule{\linewidth}{1.5pt}}\par\vspace{0.6em}
+            {\LARGE\bfseries\color{uablue} \@title}\par\vspace{0.3em}
+            {\large\color{uared} \@author}\par\vspace{0.2em}
+            {\normalsize \@date}\par\vspace{0.4em}
+            {\color{uablue}\rule{\linewidth}{1.5pt}}
+          \end{center}
+          \vspace{0.5em}
+          \begin{tcolorbox}[colback=lightgray, colframe=uared, boxrule=1pt, arc=3pt, left=10pt, right=10pt, top=6pt, bottom=6pt]
+          \textbf{\textcolor{uared}{ANSWER KEY.}} This document is for students in POL 682 (Spring, 2026) and is not to be distributed.
+          \end{tcolorbox}
+          \vspace{0.5em}
+        }
+        \makeatother
+
+        % ── Sub-question markers ──
+        \newcommand{\subq}[1]{\tcbox[on line, colback=lightgray, colframe=lightgray, boxrule=0pt, arc=2pt, left=4pt, right=4pt, top=1pt, bottom=1pt]{\textcolor{uablue}{\textsf{\textbf{(#1)}}}}}
+
+        % ── Answer environment ──
+        \newtcolorbox{answer}{colback=white, colframe=answergreen, boxrule=0.75pt, arc=3pt, left=8pt, right=8pt, top=6pt, bottom=6pt, title={\textcolor{answergreen}{\textbf{Answer}}}}
+---
+
+**Question 1.** *(15 points)* *Ordinary Least Squares.*
+
+$$y_i = a + b x_i + e_i$$
+
+\subq{a} One can show that $\frac{dY}{dX} = b$ in this equation. What does this mean in less technical terms?
+
+\begin{answer}
+The slope coefficient $b$ is the marginal effect of $X$ on $Y$. It tells us the following...for a one-unit increase in $X$, the predicted value of $Y$ changes by $b$ units, holding all else constant. Think of it as a rate of change -- the slope or "rise over run" of $Y$ with respect to $X$. $b$ is our sample estimate of the population parameter $\beta$.
+\end{answer}
+
+\subq{b} One of the assumptions of the model is that $x$ varies. What are the consequences if $x_i$ does not vary?
+
+\begin{answer}
+If $x_i$ is constant (i.e., $x_i = c$ for all $i$), then $\text{Var}(X) = 0$ and therefore $\sum(x_i - \bar{x})^2 = 0$. The OLS slope estimator is:
+
+$$b = \frac{\sum(x_i - \bar{x})(y_i - \bar{y})}{\sum(x_i - \bar{x})^2}$$
+
+With a zero denominator, $b$ is undefined---we cannot estimate the slope. Intuitively, if $X$ never changes, we have no variation to exploit to identify its relationship with $Y$. We need $X$ to take on different values across observations to trace out the line relating $X$ to $Y$. You can see this in the formula for the regression slope -- the denominator is the variance of $X$. If this is 0, we cannot compute the slope, as we cannot divide by zero.
+\end{answer}
+
+\subq{c} What does it mean for an estimator to be unbiased? Please offer a non-technical interpretation of $E(b) = \beta$.
+
+\begin{answer}
+An estimator is unbiased if, on average across many random samples **drawn from the population** equals the true population parameter.
+ $E(b) = \beta$ means that $b$ is correct \textit{on average}: while any single sample may yield a $b$ that is above or below $\beta$, the expected value (the long-run average) of $b$ is exactly $\beta$. Think of it this way -- while our individual estimates may vary due to sampling variability -- there is no systematic bias pushing our estimates away from the true $\beta$.
+ \end{answer}
+
+\newpage
+
+**Question 2.** *(15 points)* *Predictions and Expectations.*
+
+$$y_i = b_0 + b_1 x_{PID, i} + b_2 x_{College, i} + e_i$$
+
+\subq{a} Expected amount of political discussion for a Strong Republican ($x_{PID} = 1$) with a college degree ($x_{College} = 1$)?
+
+\begin{answer}
+$$E(y \mid x_{PID} = 1, x_{College} = 1) = b_0 + b_1(1) + b_2(1) = b_0 + b_1 + b_2$$
+
+The predicted hours of political discussion equals the intercept plus the full effect of being a Strong Republican plus the full effect of having a college degree. Calculate it like this:
+\end{answer}
+
+\subq{b} The amount of political discussion for an Independent ($x_{PID} = 0.5$) with a college degree ($x_{College} = 1$)....
+
+\begin{answer}
+$$E(y \mid x_{PID} = 0.5, x_{College} = 1) = b_0 + b_1(0.5) + b_2(1) = b_0 + 0.5 b_1 + b_2$$
+
+Since PID is measured on a continuous 0--1 scale, the midpoint (0.5) represents an Independent. The prediction uses half the PID slope plus the full college effect.
+\end{answer}
+
+\subq{c} Now compute the expected difference in political discussion between a Strong Republican and a Strong Democrat, with a college degree?
+
+\begin{answer}
+\begin{align*}
+&E(y \mid x_{PID} = 1, x_{College} = 1) - E(y \mid x_{PID} = 0, x_{College} = 1) \\
+&= (b_0 + b_1 + b_2) - (b_0 + b_2) \\
+&= b_1
+\end{align*}
+
+The college degree terms cancel. The expected difference is simply $b_1$---the coefficient on PID. This is a crucial characteristic of the linear regression model -- the effects are linear and additive, so the difference between two groups that differ only in PID is just the PID coefficient, regardless of the value of the college variable.
+\end{answer}
+
+\newpage
+
+**Question 3.** *(10 points)* *The Gauss-Markov Assumptions.*
+
+\subq{a} Define and describe the assumptions. \subq{b} When might each be violated?
+
+\begin{answer}
+The Gauss-Markov assumptions guarantee that OLS is the Best Linear Unbiased Estimator (BLUE). Some are required for \textit{estimation}, others for \textit{inference}.
+
+\textbf{Assumptions for Estimation:}
+
+\textbf{1. Linearity in parameters.} The PRF is linear in parameters: $Y_i = \alpha + \beta X_i + \epsilon_i$. The parameters enter linearly---we can have nonlinear transformations of $X$ (like $X^2$ or $\log X$), but the coefficients themselves must be linear. \textit{Violation:} The true relationship involves nonlinear parameters, e.g., $Y = \alpha X^{\beta}$ in its untransformed form.
+
+\textbf{2. Exogeneity.} The $X$s are exogenous and fixed: $cov(X_i, \epsilon_i) = 0$. The independent variables are ``given'' and not determined within the model; they are uncorrelated with the error term. This can be violate with simultaneous causation (e.g., regressing price on quantity when both are jointly determined by supply and demand), or omitted variables, among other causes
+
+\textbf{7. Variation in $X$.} The independent variable must vary across observations: $var(X) > 0$. \textit{Violation:} If $X$ is constant, the denominator of the slope formula is zero and $b$ is undefined (as in Question 1b).
+
+\textbf{8. Correct specification.} The model has the correct functional form and includes the correct independent variables. This might be violated by fitting a linear model to an exponential relationship, or omitting a theoretically important variable.
+
+\textbf{9. No perfect multicollinearity.} In multiple regression, no predictor is an exact linear combination of the others ($r_{x_1, x_2} \neq 1$). With just two IVs, this means no perfect correlation between the variables.
+
+\textbf{Assumptions for Inference:}
+
+\textbf{3. Zero mean error.} $E(\epsilon_i \mid X_i) = 0$. Regardless of $X_i$, the error has a zero mean---there is no systematic effect of the error on our predicted values. A model that consistently over- or under-predicts for certain ranges of $X$, suggesting a missing nonlinear term or omitted variable are examples of violating this assumption.
+
+\textbf{4. Homoskedasticity.} $var(\epsilon_i \mid X_i) = \sigma^2$ for all $i$. The variance around $\hat{Y}_i$ is the same across all levels of $X_i$. This does not bias coefficients but makes standard errors incorrect.
+
+\textbf{5. Normality of errors.} $\epsilon_i \sim N(0, \sigma)$, so $Y_i \sim N(\alpha + \beta X_i, \sigma)$. This is an extension of assumptions 3 and 4. If normality holds, OLS has minimum variance 
+
+\textbf{6. Independent errors.} $cov(\epsilon_i, \epsilon_j) = 0$ for all $i \neq j$ (no autocorrelation). The $i$th error is uncorrelated with the $j$th error. \textit{Violation:} Time-series data where today's error is correlated with yesterday's (e.g., GDP growth, stock prices), or spatial data where nearby observations share unobserved shocks (think of crime and neighborhood effects).
+
+When all assumptions hold, OLS is BLUE: it is a linear function of $Y_i$, it is unbiased ($E(b) = \beta$), and it has minimum variance among all linear unbiased estimators.
+\end{answer}
+
+\newpage
+
+**Question 4.** *(20 points)* *Applied Regression: Political Efficacy.*
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, cache = TRUE}
+library(dplyr)
+library(tidyr)
+
+download.file("https://raw.githubusercontent.com/crweber9874/advancedRegression/main/data/wss20.rda",
+    destfile = "wss20.rda"
+)
+load("wss20.rda")
+
+wss20 <- wss20 |>
+    pivot_wider(
+        names_from = contestation,
+        values_from = contestation_value
+    ) |>
+    mutate(
+        electoral_contestation =
+            rowMeans(pick(criticize_election, attend_march, court, recount, burn_flag), na.rm = TRUE),
+        authoritarianism = rowMeans(cbind(auth_1, auth_2, auth_3, auth_4), na.rm = TRUE),
+        republican = ifelse(party_identification3 == 1, 1, 0),
+        democrat = ifelse(party_identification3 == 3, 1, 0)
+    )
+
+fit1 <- lm(internal_efficacy ~ republican + democrat + female + college, data = wss20)
+fit2 <- lm(external_efficacy ~ republican + democrat + female + college, data = wss20)
+```
+
+**Model Output: Internal Efficacy**
+
+```{r, echo = FALSE}
+summary(fit1)
+```
+
+**Model Output: External Efficacy**
+
+```{r, echo = FALSE}
+summary(fit2)
+```
+
+\subq{a} Interpret the coefficients from the internal efficacy model.
+
+\begin{answer}
+Key points for a complete interpretation (coefficients will vary based on data; the structure below applies):
+
+\begin{itemize}
+\item \textbf{Intercept} ($b_0$): The predicted internal efficacy for the reference group---an Independent, male, non-college-educated respondent.
+\item \textbf{Republican}: The expected difference in internal efficacy between Republicans and Independents, holding gender and education constant. A positive coefficient means Republicans feel more internally efficacious than Independents; a negative coefficient means less.
+\item \textbf{Democrat}: The expected difference in internal efficacy between Democrats and Independents, holding gender and education constant.
+\item \textbf{Female}: The expected difference in internal efficacy between women and men, holding partisanship and education constant.
+\item \textbf{College}: The expected difference in internal efficacy between college-educated and non-college-educated respondents, holding partisanship and gender constant.
+\end{itemize}
+
+In this question, students should should report the direction and magnitude of each coefficient, reference the baseline category (Independent, male, no college degree), and note statistical significance where appropriate.
+\end{answer}
+
+\subq{b} Test $H_0: \beta_{college} = 0$ for the internal efficacy model.
+
+\begin{answer}
+The null hypothesis is $H_0: \beta_{college} = 0$ (college has no effect on internal efficacy). The alternative is $H_a: \beta_{college} \neq 0$.
+
+The test statistic is $t = \frac{b_{college}}{SE(b_{college})}$, reported in the R output. Compare the $p$-value to $\alpha = 0.05$:
+
+\begin{itemize}
+\item If $p < 0.05$: reject $H_0$. There is statistically significant evidence that college education is associated with internal efficacy.
+\item If $p \geq 0.05$: fail to reject $H_0$. We do not have sufficient evidence to conclude that college education affects internal efficacy.
+\end{itemize}
+
+To receive full credit, the answer should report the $t$-statistic, $p$-value, and state the conclusion in substantive terms (e.g., ``College-educated respondents have significantly higher/lower internal efficacy...'').
+\end{answer}
+
+\subq{c} Test $H_0: \beta_{college} = 0$ for the external efficacy model.
+
+\begin{answer}
+Now, apply the same procedure to (b),  external efficacy regression output. 
+\end{answer}
+
+\subq{d} Are partisans more politically efficacious compared to Independents?
+
+\begin{answer}
+This requires examining the Republican and Democrat coefficients in both models:
+
+\begin{itemize}
+\item If both the Republican and Democrat coefficients are positive and statistically significant, then yes---partisans of both stripes are more efficacious than Independents.
+\item If only one is significant, the answer is more nuanced (e.g., ``Republicans are more internally efficacious than Independents, but Democrats are not''). The evidence points to partisans experiencing more efficacy.
+\end{itemize}
+
+\end{answer}
+
+\newpage
+
+**Question 5.** *(15 points)* *Model Fit and $R^2$.* Given $TSS = 500$, $RSS = 200$, $n = 100$, $k = 2$.
+
+\subq{a} Calculate $R^2$.
+
+\begin{answer}
+$$R^2 = 1 - \frac{RSS}{TSS} = 1 - \frac{200}{500} = 1 - 0.4 = 0.60$$
+
+This calculation comes from the different Sum of Squares elements (you can ignore $n$ and $k$).  Roughly  60\% of the total variation in $Y$ is explained by the model (i.e., by the two predictors $X_1$ and $X_2$). The remaining 40\% is unexplained variation captured by the residuals.
+\end{answer}
+
+\subq{b} A colleague says: "An $R^2$ of this magnitude means the model is good." Do you agree?
+
+\begin{answer}
+Not necessarily. Several points are worth raising:
+
+\begin{itemize}
+\item $R^2$ \textbf{never decreases} when predictors are added. If the goal is to maximize $R^2$ then we should just keep adding variables. But this seems misguided for several reasonsl. Following \textbf{Achen (1990)}: $R^2$ depends on the variance of $X$ in the sample. The same causal effect can yield very different $R^2$ values in samples with different $X$ distributions. $R^2$ does not measure the importance of a variable.
+\item A ``good'' model depends on the research question. For \textit{prediction}, 0.60 may be quite useful. For \textit{causal inference}, the coefficient estimates, their signs, magnitudes, and standard errors are more informative than $R^2$.
+\item With $n - 1$ predictors one can achieve $R^2 = 1$, which clearly does not indicate a good model.
+\end{itemize}
+
+We should examine **adjusted $R^2$**, coefficient significance, and potentially out-of-sample performance (e.g., cross-validation) rather than relying solely on $R^2$.
+\end{answer}
+
+\subq{c} Compute the F-statistic.
+
+\begin{answer}
+The F-statistic tests $H_0$: all slope coefficients are jointly zero.
+
+$$RegSS = TSS - RSS = 500 - 200 = 300$$
+
+$$F = \frac{RegSS / k}{RSS / (n - k - 1)} = \frac{300 / 2}{200 / (100 - 2 - 1)} = \frac{150}{200 / 97} = \frac{150}{2.0619} \approx 72.75$$
+
+Degrees of freedom: $k = 2$ (numerator) and $n - k - 1 = 97$ (denominator).
+
+$$F(2, 97) \approx 72.75$$
+
+This is highly significant (the critical value of $F(2, 97)$ at $\alpha = 0.05$ is approximately 3.09). We reject the null hypothesis that both slope coefficients are jointly zero---the model as a whole has statistically significant explanatory power.
+\end{answer}
+
+\newpage
+
+**Question 6.** *(25 points)* *Matrix Inversion.*
+
+$$\mathbf{A} = \begin{bmatrix} 3 & 1 \\ 5 & 2 \end{bmatrix}$$
+
+\subq{a} Compute $\det(\mathbf{A})$. Is $\mathbf{A}$ invertible?
+
+\begin{answer}
+$$\det(\mathbf{A}) = (3)(2) - (1)(5) = 6 - 5 = 1$$
+
+Since $\det(\mathbf{A}) = 1 \neq 0$, the matrix is \textbf{nonsingular} and therefore invertible. 
+\end{answer}
+
+\subq{b} Compute $\mathbf{A}^{-1}$.
+
+\begin{answer}
+Using the formula $\mathbf{A}^{-1} = \frac{1}{ad - bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}$:
+
+$$\mathbf{A}^{-1} = \frac{1}{1}\begin{bmatrix} 2 & -1 \\ -5 & 3 \end{bmatrix} = \begin{bmatrix} 2 & -1 \\ -5 & 3 \end{bmatrix}$$
+\end{answer}
+
+\subq{c} Show that $\mathbf{A}\mathbf{A}^{-1} = \mathbf{I}$.
+
+\begin{answer}
+$$\mathbf{A}\mathbf{A}^{-1} = \begin{bmatrix} 3 & 1 \\ 5 & 2 \end{bmatrix} \begin{bmatrix} 2 & -1 \\ -5 & 3 \end{bmatrix}$$
+
+\begin{align*}
+\text{Row 1, Col 1:} &\quad 3(2) + 1(-5) = 6 - 5 = 1 \\
+\text{Row 1, Col 2:} &\quad 3(-1) + 1(3) = -3 + 3 = 0 \\
+\text{Row 2, Col 1:} &\quad 5(2) + 2(-5) = 10 - 10 = 0 \\
+\text{Row 2, Col 2:} &\quad 5(-1) + 2(3) = -5 + 6 = 1
+\end{align*}
+
+$$\mathbf{A}\mathbf{A}^{-1} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} = \mathbf{I} \quad \checkmark$$
+\end{answer}
+
+\subq{d} Is the matrix below invertible?
+
+$$\mathbf{B} = \begin{bmatrix} 5 & 5 \\ 2 & 2 \end{bmatrix}$$
+
+\begin{answer}
+$$\det(\mathbf{B}) = (5)(2) - (5)(2) = 10 - 10 = 0$$
+
+Since $\det(\mathbf{B}) = 0$, the matrix is \textbf{singular} and \textbf{not invertible}.
+\end{answer}
+
+\subq{e} What does $\det(\mathbf{X}^T\mathbf{X}) = 0$ imply about the columns of $\mathbf{X}$?
+
+\begin{answer}
+If $\det(\mathbf{X}^T\mathbf{X}) = 0$, then $\mathbf{X}^T\mathbf{X}$ is singular and cannot be inverted. This means we \textbf{cannot compute} the OLS estimator $\mathbf{b} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$.
+
+This occurs when the columns of $\mathbf{X}$ are \textbf{perfectly multicollinear}---one column can be written as an exact linear combination of the others. 
+\end{answer}
+
+\newpage
+
+**Extra Credit.** *(10 bonus points)* *OLS in Matrix Form.*
+
+$$\mathbf{X}^T\mathbf{X} = \begin{bmatrix} 5 & 15 \\ 15 & 55 \end{bmatrix} \qquad \mathbf{X}^T\mathbf{y} = \begin{bmatrix} 55 \\ 195 \end{bmatrix} \qquad (\mathbf{X}^T\mathbf{X})^{-1} = \begin{bmatrix} 1.1 & -0.3 \\ -0.3 & 0.1 \end{bmatrix}$$
+
+\subq{a} Verify $(\mathbf{X}^T\mathbf{X})(\mathbf{X}^T\mathbf{X})^{-1} = \mathbf{I}$.
+
+\begin{answer}
+$$\begin{bmatrix} 5 & 15 \\ 15 & 55 \end{bmatrix} \begin{bmatrix} 1.1 & -0.3 \\ -0.3 & 0.1 \end{bmatrix}$$
+
+\begin{align*}
+\text{Row 1, Col 1:} &\quad 5(1.1) + 15(-0.3) = 5.5 - 4.5 = 1 \\
+\text{Row 1, Col 2:} &\quad 5(-0.3) + 15(0.1) = -1.5 + 1.5 = 0 \\
+\text{Row 2, Col 1:} &\quad 15(1.1) + 55(-0.3) = 16.5 - 16.5 = 0 \\
+\text{Row 2, Col 2:} &\quad 15(-0.3) + 55(0.1) = -4.5 + 5.5 = 1
+\end{align*}
+
+$$= \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} = \mathbf{I} \quad \checkmark$$
+\end{answer}
+
+\subq{b} Compute $\mathbf{b} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$.
+
+\begin{answer}
+$$\mathbf{b} = \begin{bmatrix} 1.1 & -0.3 \\ -0.3 & 0.1 \end{bmatrix} \begin{bmatrix} 55 \\ 195 \end{bmatrix}$$
+
+\begin{align*}
+b_0 &= 1.1(55) + (-0.3)(195) = 60.5 - 58.5 = 2.0 \\
+b_1 &= (-0.3)(55) + 0.1(195) = -16.5 + 19.5 = 3.0
+\end{align*}
+
+$$\mathbf{b} = \begin{bmatrix} 2 \\ 3 \end{bmatrix}$$
+
+The estimated intercept is $b_0 = 2$ and the estimated slope is $b_1 = 3$. The sample regression function is $\hat{y} = 2 + 3x$.
+\end{answer}

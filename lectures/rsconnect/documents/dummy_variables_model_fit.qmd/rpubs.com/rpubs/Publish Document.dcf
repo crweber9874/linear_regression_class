@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/1410851/9c71e89d0bae4324964dc487ae72015c
+bundleId: https://api.rpubs.com/api/v1/document/1410851/9c71e89d0bae4324964dc487ae72015c
+url: http://rpubs.com/crweber9874/1410851
+version: 1

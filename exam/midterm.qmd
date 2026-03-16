@@ -1,0 +1,247 @@
+---
+title: "Midterm Exam"
+subtitle: "Linear Regression Analysis"
+author: "POL 682"
+date: "March 3, 2026"
+format:
+  pdf:
+    documentclass: article
+    papersize: letter
+    geometry:
+      - top=1in
+      - bottom=1in
+      - left=1.15in
+      - right=1.15in
+    fontsize: 11pt
+    mainfont: "Palatino"
+    monofont: "Menlo"
+    linestretch: 1.25
+    colorlinks: true
+    linkcolor: "darkblue"
+    urlcolor: "darkblue"
+    include-in-header:
+      text: |
+        \usepackage{fancyhdr}
+        \usepackage{titlesec}
+        \usepackage{xcolor}
+        \usepackage{enumitem}
+        \usepackage{tcolorbox}
+        \usepackage{etoolbox}
+
+        % ── Colors ──
+        \definecolor{uablue}{HTML}{0C234B}
+        \definecolor{uared}{HTML}{AB0520}
+        \definecolor{lightgray}{HTML}{F2F2F2}
+
+        % ── Header / Footer ──
+        \pagestyle{fancy}
+        \fancyhf{}
+        \fancyhead[L]{\small\textcolor{uablue}{\textbf{POL 682} — Midterm Exam}}
+        \fancyhead[R]{\small\textcolor{uablue}{March 3, 2026}}
+        \fancyfoot[C]{\small\textcolor{gray}{Page \thepage}}
+        \renewcommand{\headrulewidth}{0.4pt}
+        \renewcommand{\footrulewidth}{0pt}
+
+        % ── Title page styling ──
+        \makeatletter
+        \renewcommand{\maketitle}{%
+          \begin{center}
+            {\color{uablue}\rule{\linewidth}{1.5pt}}\par\vspace{0.6em}
+            {\LARGE\bfseries\color{uablue} \@title}\par\vspace{0.3em}
+            {\large\color{uared} \@author}\par\vspace{0.2em}
+            {\normalsize \@date}\par\vspace{0.4em}
+            {\color{uablue}\rule{\linewidth}{1.5pt}}
+          \end{center}
+          \vspace{0.5em}
+          \begin{tcolorbox}[colback=lightgray, colframe=uablue, boxrule=0.5pt, arc=3pt, left=10pt, right=10pt, top=6pt, bottom=6pt]
+          \textbf{Instructions:} Answer all questions. Show your work where appropriate. You may use your computer for calculations (e.g., RStudio). Your browser should only be used to access the course reader. All other tabs should be closed. No AI tools may be used on this exam. You may use your notes and your text. Please write clearly and concisely. Let me know if you have any questions. 
+          \end{tcolorbox}
+          \vspace{0.5em}
+        }
+        \makeatother
+
+        % ── Sub-question markers ──
+        \newcommand{\subq}[1]{\tcbox[on line, colback=lightgray, colframe=lightgray, boxrule=0pt, arc=2pt, left=4pt, right=4pt, top=1pt, bottom=1pt]{\textcolor{uablue}{\textsf{\textbf{(#1)}}}}}
+---
+
+**Question 1.** *(15 points)* *(15 points)* *Ordinary Least Squares.* The population regression function for two variables may be written as
+
+$$y_i = \alpha + \beta x_i + \epsilon_i$$
+
+Likewise, the sample regression function may be written as
+
+$$y_i = a + b x_i + e_i$$
+
+And we'll generally estimate $a$ and $b$ from a sample.
+
+\subq{a} One can show that $\frac{dY}{dX} = b$ in this equation. What does this mean in less technical terms? Please elaborate on what $b$ is in the SRF.
+
+\subq{b} One of the assumptions of the model is that $x$ varies. Considering the sample regression function, what are the consequences if $x_i$ does not vary, it is a constant?
+
+\subq{c} In class, we saw that $y_i = a + b x_i + e_i$ is an unbiased estimator of $\alpha$ and $\beta$. In other words, $E(b) = \beta$ and $E(a) = \alpha$. What does it mean for an estimator to be unbiased? To answer this question, please offer a non technical interpretation of what $E(b) = \beta$ means and elaborate on why this is an important feature of the OLS estimator.
+
+\newpage
+
+**Question 2.** *(15 points)* *(15 points)* *Predictions and Expectations.* 
+
+We estimate the following model
+
+$$y_i = b_0 + b_1 x_{PID, i} + b_2 x_{College, i} + e_i$$
+
+Here, $y_i$ is political discussion (measured in hours per week). $x_{College, i}$ is whether the respondent has a four-year college degree (or more), scored 1 if yes and 0 if no. Party identification ($x_{PID, i}$) is based on a single "self-placement" question in which the respondent indicates their partisan identity. It is measured on a seven-point continuous scale ranging from 0 (Strong Democrat) to 1 (Strong Republican), with a mean of 0.51.
+
+The expected value — the prediction — when $x_{PID} = 0$ and $x_{College} = 0$:
+
+$$
+E(y \mid x_{PID} = 0, x_{College} = 0) = b_0
+$$
+
+In other words, our prediction for a Strong Democrat without a college degree is $b_0$.
+This question asks you to consider additional expected values.
+
+\subq{a} According to this specification, what is the expected amount of political discussion for a Strong Republican ($x_{PID} = 1$) with a college degree ($x_{College} = 1$)?
+
+\subq{b} According to this specification, what is the expected amount of political discussion for an Independent ($x_{PID} = 0.5$) with a college degree ($x_{College} = 1$)?
+
+\subq{c} What is the expected difference in political discussion between a Strong Republican and a Strong Democrat, with a college degree?
+
+\newpage
+
+**Question 3.** *(10 points)* *(15 points)* *The Gaussian Assumptions.*  Describe the Gauss Markov assumptions. 
+
+\subq{a} Clearly define and describe the assumption (in your own words using examples when necessary).
+
+\subq{b} When might the assumption be violated (again, please offer an original example or set of examples)?
+
+\newpage
+
+**Question 4.** *(20 points)* *(20 points)* *Applied Regression: Political Efficacy.* In survey research, it is common to ask about political efficacy. Efficacy is often measured in two ways, internal or external. Consider the following.
+
+*On a scale from 1 (Strongly Agree) to 5 (Strongly Disagree), how much do you agree with the following statement:*
+
+**Internal Efficacy**: Sometimes politics and government seem so complicated that I don’t really understand what’s going on. 
+
+**External Efficacy**: Public officials don’t care much what people like me think.
+
+In both cases, a higher value indicates more efficacy. In this question, these are the dependent variables. I estimated two models, one for each type of efficacy. The independent variables in both models are:
+
+**Republican Partisanship** (1= Republican, 0 = Independent)
+
+**Democratic Partisanship** (1= Democrat, 0 = Independent)
+
+**Gender** (1= Female, 0 = Male)
+
+**College** (1= 4 year college degree or more, 0 = Less than four year degree)
+
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, cache = TRUE}
+library(dplyr)
+library(tidyr)
+
+download.file("https://raw.githubusercontent.com/crweber9874/advancedRegression/main/data/wss20.rda",
+    destfile = "wss20.rda"
+)
+load("wss20.rda")
+
+wss20 <- wss20 |>
+    pivot_wider(
+        names_from = contestation,
+        values_from = contestation_value
+    ) |>
+    mutate(
+        electoral_contestation =
+            rowMeans(pick(criticize_election, attend_march, court, recount, burn_flag), na.rm = TRUE),
+        authoritarianism = rowMeans(cbind(auth_1, auth_2, auth_3, auth_4), na.rm = TRUE),
+        republican = ifelse(party_identification3 == 1, 1, 0),
+        democrat = ifelse(party_identification3 == 3, 1, 0)
+    )
+
+fit1 <- lm(internal_efficacy ~ republican + democrat + female + college, data = wss20)
+summary(fit1)
+
+fit2 <- lm(external_efficacy ~ republican + democrat + female + college, data = wss20)
+summary(fit2)
+
+```
+
+\subq{a} Interpret the coefficients from the `internal efficacy` model. 
+
+\subq{b} From the `internal efficacy` model, test the hypothesis that the coefficient associated with a college degree is zero,  i.e., $\beta_{college} = 0$. What do you conclude?
+
+\subq{c} From the `external efficacy` model, test the hypothesis that the coefficient associated with a college degree is zero,  i.e., $\beta_{college} = 0$. What do you conclude?
+
+\subq{d} Are partisans — those who identify as a Democrat or Republican — more politically efficacious compared to Independents?
+
+\newpage
+
+**Question 5.** *(15 points)* *(15 points)* *Model Fit and $R^2$.* Consider the sample regression function:
+
+$$
+y_i = a + b_1 x_{1i} + b_2 x_{2i} + e_i
+$$
+
+Recall that the total variation in $Y$ (TSS) can be decomposed into the regression sum of squares (RegSS) and residual sum of squares (RSS):
+
+$$
+TSS = RegSS + RSS
+$$
+
+$$
+\sum(Y_i - \bar{Y})^2 = \sum(\hat{Y}_i - \bar{Y})^2 + \sum(Y_i - \hat{Y}_i)^2
+$$
+
+Suppose you estimate this model and find that $TSS = 500$, $RSS = 200$. The sample size is $n = 100$ and $k=2$, since there are two independent variables.
+
+\subq{a} Calculate $R^2$. In your own words, what does this number tell us about the model?
+
+\subq{b} A colleague says: "An $R^2$ of this magnitude means the model is good." Do you agree? Why or why not?
+
+\subq{c} Compute the F-statistic for this model. Report the F-value alongside the degrees of freedom.
+
+\newpage
+
+
+**Question 6.** *(25 points)* *(20 points)* *Matrix Inversion.* Recall that for a $2 \times 2$ matrix:
+
+$$\mathbf{A} = \begin{bmatrix} a & b \\ c & d \end{bmatrix} \quad \Longrightarrow \quad \mathbf{A}^{-1} = \frac{1}{ad - bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}$$
+
+Let:
+
+$$\mathbf{A} = \begin{bmatrix} 3 & 1 \\ 5 & 2 \end{bmatrix}$$
+
+\subq{a} Compute $\det(\mathbf{A})$. Is $\mathbf{A}$ invertible? Why or why not?
+
+\subq{b} Using the formula above, compute $\mathbf{A}^{-1}$.
+
+\subq{c} Show that $\mathbf{A}\mathbf{A}^{-1} = \mathbf{I}$ by carrying out the matrix multiplication.
+
+\subq{d} Is the matrix below invertible? Why or why not?
+
+$$\mathbf{B} = \begin{bmatrix} 5 & 5 \\ 2 & 2 \end{bmatrix}$$
+
+\subq{e} In the context of OLS, we need to invert $\mathbf{X}^T\mathbf{X}$ to solve for $\mathbf{b} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$. What does it imply about the columns of $\mathbf{X}$ if $\det(\mathbf{X}^T\mathbf{X}) = 0$?
+
+\newpage
+
+**Extra Credit.** *(10 bonus points)* *(5 bonus points)* *OLS in Matrix Form.* The OLS estimator in matrix form is:
+
+$$
+\mathbf{b} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}
+$$
+
+A researcher estimates with one independent variable -- i.e., a bivariate regression. There are $n = 10$ observations and one predictor (plus an intercept). $\mathbf{X}$ is $10 \times 2$ (a column of ones and a column for the predictor), and $\mathbf{y}$ is a $10 \times 1$ vector. 
+
+
+$$
+\mathbf{X}^T\mathbf{X} = \begin{bmatrix} 5 & 15 \\ 15 & 55 \end{bmatrix} \qquad \mathbf{X}^T\mathbf{y} = \begin{bmatrix} 55 \\ 195 \end{bmatrix}
+$$
+
+The inverse of $\mathbf{X}^T\mathbf{X}$ is:
+
+$$
+(\mathbf{X}^T\mathbf{X})^{-1} = \begin{bmatrix} 1.1 & -0.3 \\ -0.3 & 0.1 \end{bmatrix}
+$$
+
+\subq{a} Verify that $(\mathbf{X}^T\mathbf{X})(\mathbf{X}^T\mathbf{X})^{-1} = \mathbf{I}$ by carrying out matrix multiplication.
+
+\subq{b} Using the formula above, compute $\mathbf{b} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$. What is the estimated intercept ($b_0$) and slope ($b_1$)?

@@ -1,0 +1,278 @@
+---
+title: "Git Cheatsheet: Add, Commit, Push"
+subtitle: "POL 682: Linear Regression Analysis"
+author: "Christopher Weber, PhD"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-copy: true
+---
+
+## Overview
+
+Git is a **version control system** that tracks changes to your files over time. 
+
+This tutorial covers the core Git workflow: **add**, **commit**, and **push**.
+
+## The Model
+
+Imagine the Git workflow as progressing through four stages. You control what happens at each stage:
+
+```
+Working Directory  →  Staging Area  →  Repository (Local)  →  Remote (GitHub)
+      (edit)             (add)            (commit)               (push)
+```
+
+1. **Working Directory**: Where you edit files normally. This is just your Rstudio project. Maybe you add files, delete files, or change files. This occurs on your local computer. *If you want to save these changes to Git, eventually pushing to GitHub, you need to go through the next steps.*
+2. **Staging Area**: A shopping cart is a good metaphor. You "add" the files you want to include in the next commit. These are just snapshots of your changes, which you should treat like a list of the things you routinely save. In many cases, this is everything you've changed in Rstudio.
+3. **Local Repository**: Your personal history of saved snapshots. This is the local database on your computer that tracks all your commits. Each commit is like a version of your project at a specific point in time.
+4. **Remote Repository**: The shared version on GitHub. This is where you "push" your local commits so others can see them on Github.
+
+## Important Commands
+
+### `git status` — Check What's Happening
+
+Always start here. This command shows you:
+
+- Which files have been modified
+- Which files are staged (ready to commit)
+- Which files are untracked (new files Git doesn't know about)
+
+```bash
+git status
+```
+
+**Example:**
+
+```
+On branch main
+Changes not staged for commit:
+  modified:   lecture_gauss_markov.R
+
+Untracked files:
+  pol683Syllabus.R
+```
+
+### `git add` — Stage Your Changes
+
+The `add` puts the items in the shopping cart, but you've not yet left the store.
+
+```bash
+# Add a specific file
+git add analysis.R
+
+# Add multiple specific files
+git add analysis.R data_cleaning.R
+
+# Add all changed files (use carefully!)
+git add .
+```
+
+**Best Practice**: Add files individually or in small groups. Be careful with `git add .` unless you're certain you want to include everything. This can cause issues, particularly if you have large or sensitive data files. **Be sure to update your `.gitignore` file** to exclude files you don't want to track.**
+
+### `git commit` — Save a Snapshot
+
+The `commit` is like taking a photo of your shopping cart. It saves the staged changes to your local repository.  
+
+```bash
+git commit -m "Add regression analysis for Chapter 3 exercise"
+```
+
+**Anatomy of a good commit message:**
+
+- **Short** 
+- **Describe Changes** (not just "update" or "fix")
+- **Descriptive**: Explains *what* and *why*, not *how*. ("Week 3 Lecture Slides - Add examples for Gauss-Markov assumptions" is better than "Added slides")
+
+**Good:**
+
+```bash
+git commit -m "Fix typo in variance formula"
+git commit -m "Add simulation for Gauss-Markov assumptions"
+git commit -m "Update homework 2 with instructor feedback"
+```
+
+**Bad: **
+
+```bash
+git commit -m "stuff"
+git commit -m "changes"
+git commit -m ""
+```
+
+### `git push` — Include Changes on GitHub
+
+The `push` command uploads your local commits to the remote repository (GitHub). You've now left the store....though I've clearly stretched this metaphor beyond its limits.
+
+```bash
+git push
+```
+
+If this is your first push on a new branch:
+
+```bash
+git push -u origin main
+```
+
+## The Complete Workflow
+
+Here's the typical sequence you'll use repeatedly:
+
+```bash
+# 1. Check current status
+git status
+
+# 2. Stage the files you want to commit
+git add homework1.qmd
+
+# 3. Commit with a descriptive message
+git commit -m "Complete homework 1 exercises"
+
+# 4. Push to GitHub
+git push
+```
+
+## Viewing History
+
+### `git log` — See Commit History
+
+```bash
+# See recent commits
+git log --oneline -10
+
+# See commits with more detail
+git log
+```
+
+### `git diff` — See What Changed
+
+```bash
+# See unstaged changes
+git diff
+
+# See staged changes
+git diff --staged
+
+# See changes in a specific file
+git diff analysis.R
+```
+
+## Working with Branches
+
+Branches let you work on features or experiments without affecting the main code.
+
+```bash
+# Create and switch to a new branch
+git checkout -b homework-2
+
+# Switch back to main
+git checkout main
+
+# List all branches
+git branch
+```
+
+## Pull Requests (PRs)
+
+A **pull request** is how you propose changes to a shared repository. It's a request to "pull" your changes into the main branch.
+
+### Creating a Pull Request
+
+1. Create a branch for your work:
+   ```bash
+   git checkout -b my-class-contributions
+   ```
+
+2. Make changes, add, and commit:
+   ```bash
+   git add .
+   git commit -m "Add new feature"
+   ```
+
+3. Push your branch to GitHub:
+   ```bash
+   git push -u origin my-class-contributions
+   ```
+
+4. Go to GitHub and click "Compare & pull request"
+
+5. Write a description of your changes and submit
+
+### Commenting on Pull Requests
+
+On GitHub, you can leave comments:
+
+- **General comments**: In the "Conversation" tab
+- **Line-specific comments**: Click the `+` next to any line of code in the "Files changed" tab
+- **Review comments**: Click "Review changes" to approve, request changes, or comment
+
+## Cloning a Repository
+
+To get a copy of a repository onto your computer:
+
+```bash
+git clone <url>
+```
+
+**Example:**
+
+```bash
+git clone https://github.com/crweber9874/linear_regression_class.git
+cd linear_regression_class
+```
+
+This creates a local copy of the entire repository, including all history.
+
+## Pulling Changes — Staying in Sync
+
+Before you start working, **always pull the latest changes**:
+
+```bash
+git pull origin main
+```
+
+This downloads any commits from GitHub that you don't have locally.
+
+**Practical Advice:** Always `pull` before you start working to avoid merge conflicts!
+
+### The Daily Workflow
+
+```bash
+# 1. Pull latest changes from remote
+git pull origin main
+
+# 2. Make your changes to files
+# (edit your code, data, etc.)
+
+# 3. Stage and commit changes
+git add .
+git commit -m "Update analysis"
+
+# 4. Push changes to remote
+git push origin main
+```
+
+## Quick Reference Table
+
+| Action | When to Use | Command |
+|--------|-------------|---------|
+| **Fork** | Contributing to others' projects | Done on GitHub website |
+| **Clone** | Getting a repo onto your computer | `git clone <url>` |
+| **Pull** | Getting latest changes from remote | `git pull origin main` |
+| **Add** | Staging changes for commit | `git add <file>` or `git add .` |
+| **Commit** | Saving changes locally | `git commit -m "message"` |
+| **Push** | Sending local changes to remote | `git push origin main` |
+| **Status** | Check what's changed | `git status` |
+| **Log** | View commit history | `git log --oneline` |
+| **Diff** | See file changes | `git diff` |
+| **Branch** | Create/list branches | `git branch` / `git checkout -b <name>` |
+
+
+- [Git Cheat Sheet PDF](https://education.github.com/git-cheat-sheet-education.pdf)
+- [Interactive Tutorial](https://learngitbranching.js.org/)
+
+---
+
+*This document was created with Claude.AI to construct the slide template and code reference tables. All information is accurate and has been edited to mirror class content. See [AI-DISCLAIMER.md](../AI-DISCLAIMER.md) for course policies on AI tool usage.*
+

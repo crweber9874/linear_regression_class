@@ -1,0 +1,293 @@
+---
+title: "OLS Estimator: Detailed Derivation"
+subtitle: "POL 682: Linear Regression Analysis"
+author: "Christopher Weber, PhD"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+    code-fold: false
+    html-math-method: mathjax
+---
+
+# Overview
+
+**Goal**: The broad goal is to derive the OLS estimator. This means deriving the formulae for the slope and intercept in the equation,
+$$Y_i = a + b X_i + e_i$$
+
+How do we figure out the means to estimate  $a$ (intercept) and $b$ (slope) with real data?
+
+**Problem**. There are an infinite number of lines that could fit a set of data points. How do we choose the "best" line?
+
+**Method**: Minimize the sum of squared residuals. Minimize the distance between the observed values and values predicted by the equation (the regression line), i.e., the residuals
+
+**Starting Point**: Sample Regression Function. Later we'll *infer* to the population.  Recall we start with the equation
+
+$$Y_i = a + b X_i + e_i$$
+
+where $e_i = Y_i - a - b X_i$ is the residual
+
+# The Objective Function
+
+An **objective function** is a mathematical expression that we want to minimize (or in 683,maximize). In OLS, our objective function is the **sum of squared residuals (SSR)**
+
+In particular, we want to minimize
+
+$$SSR = \sum_{i=1}^n e_i^2$$
+
+Substituting $e_i = Y_i - a - b X_i$:
+
+$$SSR(a,b) = \sum_{i=1}^n (Y_i - a - b X_i)^2$$
+
+**The Puzzle and Solution**: There are two unknowns: $a$ and $b$, and an infinite number of values we could apply to these variables.. **But** we have a goal, find values of $a$ and $b$ that minimize this function. If we can find those values, we have derived the OLS estimators
+
+# First-Order Conditions
+
+Recall from POL 681, that if a function is convex or concave, we can always find the minimum or maximum by taking the first derivative, setting it equal to zero, and solving for the unknown(s). Thus, what we will do is  minimize $SSR(a,b)$, take partial derivatives and set to zero:
+
+$$\frac{\partial SSR}{\partial a} = 0 \quad \text{and} \quad \frac{\partial SSR}{\partial b} = 0$$
+
+These give us two equations (the **normal equations**) in two unknowns
+
+Let's move through the derivation for each parameter step-by-step
+
+## Deriving $\frac{\partial SSR}{\partial a}$
+
+### Step 1: Calculate the Partial Derivative
+
+Start with:
+
+$$\frac{\partial SSR}{\partial a} = \frac{\partial}{\partial a} \sum_{i=1}^n (Y_i - a - b X_i)^2$$
+
+This is a case where we need to use the chain rule, since we have an inner function and an outer function.
+$$= \sum_{i=1}^n \frac{\partial}{\partial a}\left[(Y_i - a - b X_i)^2\right]$$
+
+$$= \sum_{i=1}^n 2(Y_i - a - b X_i) \cdot \frac{\partial}{\partial a}(Y_i - a - b X_i)$$
+
+Since $\frac{\partial}{\partial a}(Y_i - a - b X_i) = -1$:
+
+
+Therefore:
+
+$$= \sum_{i=1}^n 2(Y_i - a - b X_i) \cdot (-1)$$
+
+$$= -2 \sum_{i=1}^n (Y_i - a - b X_i)$$
+
+### Step 2: Set Equal to Zero
+
+We've calcluated the partial derivative. Now we must set the equation to zero to solve for $a$.
+
+$$-2 \sum_{i=1}^n (Y_i - a - b X_i) = 0$$
+
+Divide by $-2$:
+
+$$\sum_{i=1}^n (Y_i - a - b X_i) = 0$$
+
+### Step 3: Sum
+
+Now, let's expand the summatio.
+
+$$\sum_{i=1}^n Y_i - \sum_{i=1}^n a - \sum_{i=1}^n b X_i = 0$$
+
+Since $a$ and $b$ are constants, they don't change (recall, we're estimating a line, a constant effect observed as a slope and intercept). Thus,
+
+$$\sum_{i=1}^n Y_i - na - b \sum_{i=1}^n X_i = 0$$
+
+**This is equation has a special name, the first normal equation. It corresponds to the intercept. From here, it's a straightforward set of algebreic steps to solve for the intecept**
+
+## Solving for $a$
+
+### Step 1: Isolate the Intercept
+
+From the first normal equation:
+
+$$\sum_{i=1}^n Y_i - na - b \sum_{i=1}^n X_i = 0$$
+
+Rearrange to isolate $a$:
+
+$$na = \sum_{i=1}^n Y_i - b \sum_{i=1}^n X_i$$
+
+Divide both sides by $n$:
+
+$$a = \frac{1}{n}\sum_{i=1}^n Y_i - b \cdot \frac{1}{n}\sum_{i=1}^n X_i$$
+
+It's important to note that $\bar{Y} = \frac{1}{n}\sum_{i=1}^n Y_i$ and $\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i$:
+
+$$\boxed{a = \bar{Y} - b\bar{X}}$$
+
+**Key Characteristic of the equation**: The regression line passes through the point $(\bar{X}, \bar{Y})$
+
+ **Moving On**:We're halfway there. We still need to find $b$. Fortunately, the process is the same.
+
+## Deriving $\frac{\partial SSR}{\partial b}$
+
+### Step 1: Take the Partial Derivative
+
+Recall our original equation.
+
+$$\frac{\partial}{\partial b} \sum_{i=1}^n (Y_i - a - b X_i)^2$$
+
+Because we have an inner and outer function, apply the chain rule, but with respect to $b$ this time:
+
+$$= \sum_{i=1}^n 2(Y_i - a - b X_i) \cdot \frac{\partial}{\partial b}(Y_i - a - b X_i)$$
+
+$$= \sum_{i=1}^n 2(Y_i - a - b X_i) \cdot (-X_i)$$
+
+$$= -2 \sum_{i=1}^n X_i(Y_i - a - b X_i)$$
+
+### Step 2: Set Equal to Zero
+
+Setting the derivative equal to zero:
+
+$$-2 \sum_{i=1}^n X_i(Y_i - a - b X_i) = 0$$
+
+Divide by $-2$:
+
+$$\sum_{i=1}^n X_i(Y_i - a - b X_i) = 0$$
+
+Expand:
+
+$$\sum_{i=1}^n X_i Y_i - a\sum_{i=1}^n X_i - b\sum_{i=1}^n X_i^2 = 0$$
+
+**This is the second normal equation, again formed simply by calculating the partial derivative and setting it equal to zero**
+
+## Solving for $b$
+
+### Step 1: Substitute the Intercept Formula
+
+From the second normal equation:
+
+$$\sum_{i=1}^n X_i Y_i - a\sum_{i=1}^n X_i - b\sum_{i=1}^n X_i^2 = 0$$
+
+Let's substitute  $a = \bar{Y} - b\bar{X}$:
+
+$$\sum_{i=1}^n X_i Y_i - (\bar{Y} - b\bar{X})\sum_{i=1}^n X_i - b\sum_{i=1}^n X_i^2 = 0$$
+
+### Step 2: Distribute and Simplify
+
+Distribute:
+
+$$\sum_{i=1}^n X_i Y_i - \bar{Y}\sum_{i=1}^n X_i + b\bar{X}\sum_{i=1}^n X_i - b\sum_{i=1}^n X_i^2 = 0$$
+
+Note that $\sum_{i=1}^n X_i = n\bar{X}$:
+
+$$\sum_{i=1}^n X_i Y_i - \bar{Y} \cdot n\bar{X} + b\bar{X} \cdot n\bar{X} - b\sum_{i=1}^n X_i^2 = 0$$
+
+$$\sum_{i=1}^n X_i Y_i - n\bar{X}\bar{Y} + bn\bar{X}^2 - b\sum_{i=1}^n X_i^2 = 0$$
+
+### Step 3: Solve for $b$
+
+Collect terms with $b$:
+
+$$\sum_{i=1}^n X_i Y_i - n\bar{X}\bar{Y} = b\left(\sum_{i=1}^n X_i^2 - n\bar{X}^2\right)$$
+
+Solve for $b$:
+
+$$\boxed{b = \frac{\sum_{i=1}^n X_i Y_i - n\bar{X}\bar{Y}}{\sum_{i=1}^n X_i^2 - n\bar{X}^2}}$$
+
+**This is the OLS estimator for the slope**
+
+# Alternative Form Using Deviations
+
+Define deviations from means:
+
+$$x_i = X_i - \bar{X} \quad \text{and} \quad y_i = Y_i - \bar{Y}$$
+
+**Numerator**:
+
+$$\sum_{i=1}^n X_i Y_i - n\bar{X}\bar{Y} = \sum_{i=1}^n x_i y_i$$
+
+**Denominator**:
+
+$$\sum_{i=1}^n X_i^2 - n\bar{X}^2 = \sum_{i=1}^n x_i^2$$
+
+Therefore:
+
+$$\boxed{b = \frac{\sum_{i=1}^n x_i y_i}{\sum_{i=1}^n x_i^2}}$$
+
+This is the **deviation form** of the OLS slope estimator
+
+**An Important Insight**: *The slope is the covariance between $X$ and $Y$ divided by the variance of $X$*
+
+$$b = \frac{Cov(X,Y)}{Var(X)}$$
+
+
+## Why?
+
+Let's see why these identies hold:
+ $\sum X_i Y_i - n\bar{X}\bar{Y} = \sum x_i y_i$:
+
+$$\sum_{i=1}^n x_i y_i = \sum_{i=1}^n (X_i - \bar{X})(Y_i - \bar{Y})$$
+
+Again, expand:
+
+$$= \sum_{i=1}^n (X_i Y_i - X_i\bar{Y} - \bar{X}Y_i + \bar{X}\bar{Y})$$
+
+$$= \sum_{i=1}^n X_i Y_i - \bar{Y}\sum_{i=1}^n X_i - \bar{X}\sum_{i=1}^n Y_i + n\bar{X}\bar{Y}$$
+
+$$= \sum_{i=1}^n X_i Y_i - \bar{Y} \cdot n\bar{X} - \bar{X} \cdot n\bar{Y} + n\bar{X}\bar{Y}$$
+
+$$= \sum_{i=1}^n X_i Y_i - n\bar{X}\bar{Y} - n\bar{X}\bar{Y} + n\bar{X}\bar{Y}$$
+
+$$= \sum_{i=1}^n X_i Y_i - n\bar{X}\bar{Y}$$
+
+
+And now, lets'  see how $\sum X_i^2 - n\bar{X}^2 = \sum x_i^2$:
+
+$$\sum_{i=1}^n x_i^2 = \sum_{i=1}^n (X_i - \bar{X})^2$$
+
+Again expand:
+
+$$= \sum_{i=1}^n (X_i^2 - 2X_i\bar{X} + \bar{X}^2)$$
+
+$$= \sum_{i=1}^n X_i^2 - 2\bar{X}\sum_{i=1}^n X_i + n\bar{X}^2$$
+
+$$= \sum_{i=1}^n X_i^2 - 2\bar{X} \cdot n\bar{X} + n\bar{X}^2$$
+
+$$= \sum_{i=1}^n X_i^2 - 2n\bar{X}^2 + n\bar{X}^2$$
+
+$$= \sum_{i=1}^n X_i^2 - n\bar{X}^2$$
+
+# The Two Normal Equations
+
+**First Normal Equation** (from $\frac{\partial SSR}{\partial a} = 0$):
+
+$$\sum_{i=1}^n Y_i = na + b\sum_{i=1}^n X_i$$
+
+**Second Normal Equation** (from $\frac{\partial SSR}{\partial b} = 0$):
+
+$$\sum_{i=1}^n X_i Y_i = a\sum_{i=1}^n X_i + b\sum_{i=1}^n X_i^2$$
+
+These are two linear equations in two unknowns ($a$ and $b$)
+
+# Summary of OLS Formulas
+
+**Slope**:
+
+$$b = \frac{\sum_{i=1}^n (X_i - \bar{X})(Y_i - \bar{Y})}{\sum_{i=1}^n (X_i - \bar{X})^2} = \frac{\sum x_i y_i}{\sum x_i^2}$$
+
+**Intercept**:
+
+$$a = \bar{Y} - b\bar{X}$$
+
+**Fitted Values**:
+
+$$\hat{Y}_i = a + b X_i$$
+
+**Residuals**:
+
+$$e_i = Y_i - \hat{Y}_i$$
+
+
+# Concluding Remarks
+
+- OLS minimizes the sum of squared residuals
+- OLS is  one way -- of many -- to "optimize" a regression line -- i.e., find the best fiitting line.
+- Derivation uses calculus (partial derivatives)
+- Results in two **normal equations**
+- Slope formula has intuitive interpretation: $\frac{Cov(X,Y)}{Var(X)}$
+- Intercept ensures line passes through $(\bar{X}, \bar{Y})$
+- Residuals are orthogonal (uncorrelaed) to the predictor
+- This derivation assumes a simple linear regression with one predictor using scalar algebra. With multiple variables, the math becomes more complex bordering on intractable. In that case, we use matrix algebra (covered in another chapter)
