@@ -216,10 +216,11 @@ Complete all assigned modules by the deadline.
 
 ---
 
-### Week 8 (3/17): Assumptions of the Linear Model
+### Week 8 (3/17): Interactions and Heteroskedasticity
 
-- **Topics**: GLM and Heteroskedasticity
-- **Reading**: Fox, Chapter 12
+- **Topics**: Categorical and Continuous Interactions, Non-Additivity, Heteroskedasticity Detection and Correction, Weighted Least Squares, Robust Standard Errors
+- **Reading**: Fox, Chapter 12; Course Notes, Chapters 6–7
+- **Slides**: [interactions_heteroskedasticity.qmd](lectures/interactions_heteroskedasticity.qmd)
 
 ### Week 9 (3/24): Collinearity
 

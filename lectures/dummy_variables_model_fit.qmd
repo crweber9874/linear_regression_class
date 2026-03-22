@@ -1,6 +1,6 @@
 ---
-title: "Dummy Variables and Model Fit"
-subtitle: "Dummy Variables, R-squared, Cross-Validation, and the Achen Debate"
+title: "Model Inference"
+subtitle: "Dummy Variables, R-squared, Cross-Validation, and Interpretation"
 format:
   revealjs:
     theme: [default, custom.scss]
@@ -140,8 +140,8 @@ wss20 <- wss20 |>
     democrat = ifelse(party_identification3 == 1, 1, 0),
     independent = ifelse(party_identification3 == 2, 1, 0),
     trust_raw = rowMeans(cbind(trustCongress, trustPresident, trustSC,
-                               trustGovernment, trustStateleg, trustPolice,
-                               trustScience), na.rm = TRUE),
+                          trustGovernment, trustStateleg, trustPolice,
+                          trustScience), na.rm = TRUE),
     institutional_trust = (trust_raw - 1) / 3
   )
 ```

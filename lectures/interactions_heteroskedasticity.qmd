@@ -1,0 +1,987 @@
+---
+title: "Interactions and Heteroskedasticity"
+subtitle: "Non-Additivity, WLS, and Robust Inference"
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    slide-number: true
+    chalkboard: true
+    smaller: true
+    scrollable: true
+    math: katex
+    transition: fade
+    width: 1200
+    height: 750
+    footer: "POL 682 | Interactions & Heteroskedasticity"
+---
+
+# Part I: Interactions {background-color="white" style="color: black;"}
+
+What happens when the effect of one predictor depends on the value of another?
+
+## Motivation
+
+Up to this point, we've assumed that the linear regression model is **additive** — the effect of one predictor on $Y$ doesn't depend on the value of another predictor. But this assumption is often unrealistic.
+
+. . .
+
+- Does the effect of authoritarianism on institutional trust differ across partisan groups?
+- Does the relationship between income and vote margins change depending on a community's racial composition?
+
+. . .
+
+These are questions about **interactions**. In this lecture, we develop the interaction model, show how it generalizes the additive model, and then turn to what happens when a core assumption of the linear model — constant error variance — is violated.
+
+## Recap: The Additive Model
+
+Recall the additive model with dummy variables from our previous lecture:
+
+$$
+Y_i = \alpha + \gamma_{\text{Rep}} D_{\text{Rep}} + \gamma_{\text{Dem}} D_{\text{Dem}} + \beta_{\text{Auth}} X_{\text{Auth}} + e_i
+$$
+
+. . .
+
+The expected values for each group:
+
+$$
+\begin{eqnarray*}
+E(Y \mid \text{Independent}) &=& \alpha + \beta_{\text{Auth}} X_{\text{Auth}} \\
+E(Y \mid \text{Republican}) &=& (\alpha + \gamma_{\text{Rep}}) + \beta_{\text{Auth}} X_{\text{Auth}} \\
+E(Y \mid \text{Democrat}) &=& (\alpha + \gamma_{\text{Dem}}) + \beta_{\text{Auth}} X_{\text{Auth}}
+\end{eqnarray*}
+$$
+
+. . .
+
+The slope on authoritarianism is the **same** for every group — only the intercept shifts. The lines are parallel.
+
+## The Problem with Additivity
+
+The additive model forces:
+
+$$\frac{\partial Y}{\partial X_{\text{Auth}}} = \beta_{\text{Auth}}$$
+
+. . .
+
+This is a constant — the same for Republicans, Democrats, and Independents. But what if the effect of authoritarianism *differs* across party groups?
+
+. . .
+
+A Republican who scores high on authoritarianism might have a very different level of institutional trust than a Democrat who scores high on authoritarianism — not just a different *baseline*, but a different *response* to authoritarianism.
+
+. . .
+
+The additive model cannot capture this. We need **interactions**.
+
+## The Interaction Model
+
+We relax the additivity assumption by estimating an **interactive** model:
+
+$$
+Y_i = \alpha + \gamma_{\text{Rep}} D_{\text{Rep}} + \gamma_{\text{Dem}} D_{\text{Dem}} + \beta_{\text{Auth}} X_{\text{Auth}} + \delta_{\text{Rep}} (X_{\text{Auth}} \times D_{\text{Rep}}) + \delta_{\text{Dem}} (X_{\text{Auth}} \times D_{\text{Dem}}) + e_i
+$$
+
+. . .
+
+We are creating two additional variables: authoritarianism $\times$ Republican and authoritarianism $\times$ Democrat. Just the product of the two variables.
+
+## Interaction Model: Conditional Expectations
+
+$$
+\begin{eqnarray*}
+E(Y \mid \text{Independent}) &=& \alpha + \beta_{\text{Auth}} X_{\text{Auth}} \\
+E(Y \mid \text{Republican}) &=& (\alpha + \gamma_{\text{Rep}}) + (\beta_{\text{Auth}} + \delta_{\text{Rep}}) X_{\text{Auth}} \\
+E(Y \mid \text{Democrat}) &=& (\alpha + \gamma_{\text{Dem}}) + (\beta_{\text{Auth}} + \delta_{\text{Dem}}) X_{\text{Auth}}
+\end{eqnarray*}
+$$
+
+. . .
+
+The marginal effect of authoritarianism now **depends on party identification**:
+
+$$\frac{\partial Y}{\partial X_{\text{Auth}}} = \beta_{\text{Auth}} + \delta_{\text{Rep}} D_{\text{Rep}} + \delta_{\text{Dem}} D_{\text{Dem}}$$
+
+. . .
+
+- $\beta_{\text{Auth}}$ = slope for Independents (reference group)
+- $\delta_{\text{Rep}}$ = **difference** in slope between Republicans and Independents
+- $\delta_{\text{Dem}}$ = **difference** in slope between Democrats and Independents
+
+The lines are no longer parallel — each group gets its own intercept *and* slope.
+
+## Always Include Lower-Order Terms
+
+It is important to always include the lower-order constituent terms in an interactive model.
+
+. . .
+
+Omitting dummies forces all groups to share the same intercept:
+
+$$Y_i = \alpha + \beta_{\text{Auth}} X_{\text{Auth}} + \delta_{\text{Rep}} (X_{\text{Auth}} \times D_{\text{Rep}}) + \delta_{\text{Dem}} (X_{\text{Auth}} \times D_{\text{Dem}}) + e_i$$
+
+Omitting the main effect of authoritarianism forces the slope to be zero for Independents:
+
+$$Y_i = \alpha + \gamma_{\text{Rep}} D_{\text{Rep}} + \gamma_{\text{Dem}} D_{\text{Dem}} + \delta_{\text{Rep}} (X_{\text{Auth}} \times D_{\text{Rep}}) + \delta_{\text{Dem}} (X_{\text{Auth}} \times D_{\text{Dem}}) + e_i$$
+
+. . .
+
+The full model should include **all constituent terms**. We can always *test* whether they are zero, but we must estimate the full model first.
+
+## Interaction Model: Estimation
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, cache = TRUE}
+library(dplyr)
+library(tidyr)
+
+download.file("https://raw.githubusercontent.com/crweber9874/advancedRegression/main/data/wss20.rda",
+              destfile = "wss20.rda")
+load("wss20.rda")
+
+wss20 <- wss20 |>
+  pivot_wider(names_from = contestation, values_from = contestation_value) |>
+  mutate(
+    authoritarianism = rowMeans(cbind(auth_1, auth_2, auth_3, auth_4), na.rm = TRUE),
+    republican = ifelse(party_identification3 == 3, 1, 0),
+    democrat = ifelse(party_identification3 == 1, 1, 0),
+    independent = ifelse(party_identification3 == 2, 1, 0),
+    trust_raw = rowMeans(cbind(trustCongress, trustPresident, trustSC,
+                          trustGovernment, trustStateleg, trustPolice,
+                          trustScience), na.rm = TRUE),
+    institutional_trust = (trust_raw - 1) / 3
+  )
+wss20$pid_label <- ifelse(wss20$republican == 1 & !is.na(wss20$republican), "Republican",
+                   ifelse(wss20$democrat == 1 & !is.na(wss20$democrat), "Democrat",
+                   ifelse(wss20$independent == 1 & !is.na(wss20$independent), "Independent", NA)))
+```
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+# Additive model (restricted)
+fit_additive <- lm(institutional_trust ~ authoritarianism + republican + democrat, data = wss20)
+
+# Interactive model (unrestricted)
+fit_interaction <- lm(institutional_trust ~ authoritarianism * republican + authoritarianism * democrat, data = wss20)
+summary(fit_interaction)
+```
+
+## Interaction Model: F-Test
+
+Do the interaction terms jointly improve the model? We can test this with the F-test, comparing the restricted (additive) and unrestricted (interactive) models.
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+anova(fit_additive, fit_interaction)
+```
+
+. . .
+
+If the F-statistic is significant, the interaction terms improve the model — the slopes genuinely differ across groups.
+
+## Interaction Model: Visualization
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+#| fig-width: 10
+#| fig-height: 6
+library(ggplot2)
+
+b <- coef(fit_interaction)
+x_range <- seq(min(wss20$authoritarianism, na.rm = TRUE),
+               max(wss20$authoritarianism, na.rm = TRUE), length.out = 100)
+
+line_df <- data.frame(
+  pid_label = rep(c("Independent", "Republican", "Democrat"), each = 100),
+  x = rep(x_range, 3)
+)
+line_df$y <- ifelse(line_df$pid_label == "Independent",
+               b[1] + b[2] * line_df$x,
+             ifelse(line_df$pid_label == "Republican",
+               (b[1] + b[3]) + (b[2] + b[5]) * line_df$x,
+               (b[1] + b[4]) + (b[2] + b[6]) * line_df$x))
+
+scatter_df <- wss20 |> dplyr::filter(!is.na(pid_label), !is.na(authoritarianism),
+                              !is.na(institutional_trust))
+
+ggplot() +
+  geom_jitter(data = scatter_df,
+              aes(x = authoritarianism, y = institutional_trust, color = pid_label),
+              alpha = 0.25, size = 1, width = 0.1, height = 0.1) +
+  geom_line(data = line_df, aes(x = x, y = y, color = pid_label), linewidth = 1.2) +
+  scale_color_manual(
+    values = c("Independent" = "purple", "Republican" = "red", "Democrat" = "blue")
+  ) +
+  labs(x = "Authoritarianism",
+       y = "E(Institutional Trust)",
+       color = NULL) +
+  theme_minimal() +
+  theme(legend.position = c(0.02, y = 0.98), legend.justification = c(0, 1))
+```
+
+Unlike the additive model, slopes now differ across groups. Compare this to the parallel lines from the intercept-shift model.
+
+# Continuous-by-Continuous Interactions {background-color="white" style="color: black;"}
+
+What if both variables in the interaction are continuous?
+
+## Setting Up the Arizona Precinct Data
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE, cache = TRUE}
+load("/Users/chrisweber/Dropbox/github_repos/linear_regression/quarto-book/precinct_voter_summary.rda")
+load("/Users/chrisweber/Dropbox/github_repos/linear_regression/quarto-book/precinct_tract_data.rda")
+
+precinct_voter_summary <- precinct_voter_summary |>
+  dplyr::mutate(
+    pct_latino = (tract_acs_latino / tract_acs_total_population) * 100,
+    pct_white  = (tract_acs_non_latino_white / tract_acs_total_population) * 100
+  )
+head(precinct_voter_summary[, c("dos_precinct_key", "trump_harris_margin",
+                                 "tract_acs_median_household_income",
+                                 "pct_latino", "tract_acs_median_age",
+                                 "tract_acs_gini_index")])
+```
+
+## Arizona Precincts: Map
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+library(sf)
+library(leaflet)
+
+az_map <- precinct_tract_data |>
+  dplyr::left_join(
+    precinct_voter_summary[, c("dos_precinct_key", "trump_harris_margin",
+                                "tract_acs_median_household_income",
+                                "pct_latino", "tract_acs_median_age",
+                                "tract_acs_gini_index")],
+    by = "dos_precinct_key"
+  ) |>
+  dplyr::filter(!is.na(trump_harris_margin))
+
+az_map <- st_transform(az_map, 4326)
+az_map <- az_map[st_geometry_type(az_map) %in% c("POLYGON", "MULTIPOLYGON"), ]
+
+pal <- colorNumeric(
+  palette = c("blue", "white", "red"),
+  domain = az_map$trump_harris_margin
+)
+
+leaflet(az_map, width = "100%", height = 500) |>
+  addProviderTiles(providers$CartoDB.Positron) |>
+  addPolygons(
+    fillColor = ~pal(trump_harris_margin),
+    fillOpacity = 0.7,
+    color = "#444", weight = 0.3, opacity = 0.5,
+    label = ~paste0(
+      "<b>", precinct_name, "</b> (", county, ")<br>",
+      "Margin: ", round(trump_harris_margin * 100, 1), " pts<br>",
+      "Median Income: $", formatC(tract_acs_median_household_income, format = "d", big.mark = ","), "<br>",
+      "% Latino: ", round(pct_latino, 1), "<br>",
+      "Median Age: ", round(tract_acs_median_age, 1), "<br>",
+      "Gini: ", round(tract_acs_gini_index, 3)
+    ) |> lapply(htmltools::HTML),
+    highlightOptions = highlightOptions(weight = 2, color = "black", bringToFront = TRUE)
+  ) |>
+  addLegend("bottomright", pal = pal, values = ~trump_harris_margin,
+            title = "Trump\u2013Harris<br>Margin", opacity = 0.7)
+```
+
+## Continuous Interaction: The Question
+
+We might ask: does the effect of income on Trump's margin depend on the community's Latino population share?
+
+. . .
+
+In a predominantly white precinct, higher income might push margins in one direction; in a predominantly Latino precinct, the income effect might be different — or even reversed.
+
+. . .
+
+$$
+\text{Margin}_i = \beta_0 + \beta_1 \text{Income}_i + \beta_2 \text{Latino}_i + \beta_3 (\text{Income}_i \times \text{Latino}_i) + \beta_4 \text{Age}_i + \beta_5 \text{Gini}_i + e_i
+$$
+
+## Continuous Interaction: The Marginal Effect
+
+Take the partial derivative with respect to income:
+
+$$\frac{\partial \text{Margin}}{\partial \text{Income}} = \beta_1 + \beta_3 \times \text{Latino}_i$$
+
+. . .
+
+This is the key insight: the marginal effect of income is *not* a single number. It's a function of percent Latino.
+
+- At a precinct where $\text{Latino} = 0$: effect of income is just $\beta_1$
+- At a precinct where $\text{Latino} = 50$: effect is $\beta_1 + 50\beta_3$
+
+. . .
+
+The interaction coefficient $\beta_3$ tells you how much the income effect *changes* for each one-unit increase in percent Latino — but $\beta_3$ by itself doesn't tell you what the income effect actually *is* at any particular value.
+
+. . .
+
+You need both $\beta_1$ and $\beta_3$ together. This is why you can't just look at the coefficient table.
+
+## Continuous Interaction: Estimation
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+fit_interact_az <- lm(trump_harris_margin ~ tract_acs_median_household_income *
+                        pct_latino + tract_acs_median_age + tract_acs_gini_index,
+                      data = precinct_voter_summary)
+summary(fit_interact_az)
+```
+
+## Computing Marginal Effects
+
+We plug in different values of percent Latino, compute the marginal effect at each one, and plot it. The code below also computes confidence intervals using simulation from the sampling distribution — 1,000 draws from the multivariate normal using `MASS::mvrnorm()`.
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+set.seed(42)
+b <- coef(fit_interact_az)
+v <- vcov(fit_interact_az)
+sim_coefs <- MASS::mvrnorm(1000, mu = b, Sigma = v)
+
+# Values of pct_latino to evaluate
+latino_vals <- seq(min(precinct_voter_summary$pct_latino, na.rm = TRUE),
+                   max(precinct_voter_summary$pct_latino, na.rm = TRUE),
+                   length.out = 200)
+
+# For each draw, compute marginal effect: ME = beta_income + beta_interaction * latino
+sim_me <- outer(latino_vals, 1:1000, function(lat, i) {
+  sim_coefs[i, "tract_acs_median_household_income"] +
+    sim_coefs[i, "tract_acs_median_household_income:pct_latino"] * lat
+})
+
+me_df <- data.frame(
+  pct_latino = latino_vals,
+  effect = rowMeans(sim_me),
+  lwr = apply(sim_me, 1, quantile, 0.025),
+  upr = apply(sim_me, 1, quantile, 0.975)
+)
+```
+
+## Marginal Effect Plot
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+#| fig-width: 10
+#| fig-height: 6
+library(ggplot2)
+
+ggplot(me_df, aes(x = pct_latino, y = effect)) +
+  geom_ribbon(aes(ymin = lwr, ymax = upr), fill = "steelblue", alpha = 0.2) +
+  geom_line(linewidth = 1) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(x = "Percent Latino",
+       y = "Marginal Effect of Median Income\non Trump\u2013Harris Margin",
+       title = "How the Income Effect Changes with Latino Population Share") +
+  theme_minimal()
+```
+
+. . .
+
+The black line is the estimated marginal effect. The shaded band is the 95% CI. Where the band includes zero, the income effect is not statistically distinguishable from zero. Where it's entirely above or below zero, the effect is significant at the 5% level.
+
+## Reading Marginal Effect Plots
+
+This is the right way to interpret a continuous interaction:
+
+. . .
+
+1. The coefficient on the interaction term alone — $\hat{\beta}_3$ — tells you the *rate of change* of the income effect as Latino percentage increases
+2. It does **not** tell you what the income effect *is* at any particular value
+3. You always need the full marginal effect calculation and the plot
+
+. . .
+
+In practice:
+
+- Compute marginal effects at representative values (e.g., 10th, 25th, 50th, 75th, 90th percentiles)
+- Use `vcov()` or simulation to get confidence intervals
+- Plot the marginal effect with uncertainty bands
+
+## Interactions: Summary
+
+1. **Categorical interactions** allow different slopes for different groups
+2. **Continuous interactions** allow the marginal effect of one variable to vary smoothly with another
+3. Always include the lower-order constituent terms
+4. Use **marginal effect plots** to interpret continuous interactions — the coefficient on the interaction term alone is not sufficient
+5. The **F-test** (`anova()`) tests whether interaction terms jointly improve the model
+
+. . .
+
+Now, let's turn to a different problem. Looking at the Arizona precinct data, you may have noticed something: the *spread* of the residuals isn't constant. That brings us to heteroskedasticity.
+
+# Part II: Heteroskedasticity {background-color="white" style="color: black;"}
+
+When the error variance is not constant
+
+## Recall the Gauss-Markov Assumptions
+
+| # | Assumption | Math | Purpose |
+|:--:|:-----------|:----|:--------|
+| 1 | Linearity | $y_i = \mathbf{x}_i^T\boldsymbol{\beta} + \epsilon_i$ | Estimation |
+| 2 | Exogenous IVs | $\text{cov}(X_i, \epsilon_i) = 0$ | Estimation |
+| 3 | Zero mean error | $E(\epsilon_i) = 0$ | Inference |
+| **4** | **Homoskedasticity** | $\text{var}(\epsilon_i) = \sigma^2$ | **Inference** |
+| 5 | Normality | $\epsilon_i \sim N(0, \sigma)$ | Inference |
+| 6 | Independent errors | $\text{cov}(\epsilon_i, \epsilon_j) = 0$ | Inference |
+| 7 | Variation in X | $\text{var}(X) > 0$ | Estimation |
+| 8 | Correct specification | No omitted/extraneous variables | Estimation |
+| 9 | No perfect multicollinearity | No perfect linear combinations | Estimation |
+
+. . .
+
+Assumptions 1–2 and 7–9 are needed for **unbiased** estimates. Assumptions 3–6 are needed for valid **inference**. Today we focus on Assumption 4.
+
+## The Variance-Covariance Matrix under Homoskedasticity
+
+Under the Gauss-Markov assumptions:
+
+$$E(\boldsymbol{\epsilon}\boldsymbol{\epsilon}^T) = \sigma^2 \mathbf{I} = \begin{bmatrix} \sigma^2&\cdots & 0\\ 0&\sigma^2 & 0\\ \vdots & \vdots & \vdots\\ 0&\cdots &\sigma^2\\ \end{bmatrix}$$
+
+. . .
+
+Every observation has the same error variance, and errors are uncorrelated. The variance-covariance matrix of the OLS estimator simplifies neatly:
+
+$$\text{var}(\mathbf{b}) = \sigma^2 (\mathbf{X}^T\mathbf{X})^{-1}$$
+
+This is what R reports when you call `summary(lm(...))`.
+
+## What Goes Wrong with Heteroskedasticity?
+
+If $E(\boldsymbol{\epsilon}\boldsymbol{\epsilon}^T) = \sigma^2 \boldsymbol{\Omega}$ where $\boldsymbol{\Omega} \neq \mathbf{I}$, then:
+
+$$\text{var}(\mathbf{b}) = \sigma^2(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\boldsymbol{\Omega} \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}$$
+
+. . .
+
+The $\boldsymbol{\Omega}$ sits in the middle and **does not simplify**. The standard formula $\sigma^2 (\mathbf{X}^T\mathbf{X})^{-1}$ is **wrong**.
+
+. . .
+
+**Consequences:**
+
+- OLS coefficients remain **unbiased** — but they are no longer efficient (not BLUE)
+- Standard errors are **wrong**
+- $t$-values, $p$-values, and confidence intervals are **wrong**
+- Type II errors increase — we may fail to reject false nulls
+
+## Sources of Heteroskedasticity
+
+**Heterogeneous units.** Consider a model predicting political contributions from income. Low-income individuals cluster near zero, but high-income individuals vary enormously. The variance fans out like a megaphone.
+
+. . .
+
+**Outliers.** A handful of extreme observations inflate the residual variance in certain regions of the predictor space while leaving it small elsewhere.
+
+. . .
+
+**Incorrect specification.** If the true relationship is nonlinear but we fit a linear model, residuals are systematically larger where the misspecification is worst.
+
+. . .
+
+**Learning effects.** In panel or repeated-measures designs, respondents may become more consistent over time. Early waves show high variability; later waves converge.
+
+# Building the WLS Estimator {background-color="white" style="color: black;"}
+
+Transforming the data to restore constant variance
+
+## The Core Idea
+
+The heteroskedastic error covariance is:
+
+$$E(\boldsymbol{\epsilon}\boldsymbol{\epsilon}^T) = \sigma^2 \boldsymbol{\Omega}$$
+
+where $\boldsymbol{\Omega}$ is a diagonal matrix with unequal elements — some observations are "noisier" than others.
+
+. . .
+
+**The WLS strategy:** transform the data so that the transformed errors have constant variance. Then apply OLS to the transformed data. The transformed OLS estimator will be BLUE.
+
+. . .
+
+If observation $i$ has a large error variance (noisy), we **downweight** it. If observation $j$ has a small error variance (precise), we **upweight** it.
+
+## Step 1: The Weight Matrix
+
+We need $\boldsymbol{\Omega}$, the matrix describing how error variance differs across observations:
+
+$$\boldsymbol{\Omega}=\begin{bmatrix}w_{11}&\cdots & 0\\0&w_{22}& 0\\\vdots & \vdots & \vdots\\0&\cdots &w_{nn}\\\end{bmatrix}$$
+
+. . .
+
+The diagonal entries $w_{ii}$ represent the relative variance of each observation. For instance, a precinct with $w_{ii} = 4$ has four times the error variance of the baseline.
+
+## Step 2: Decompose the Inverse
+
+Define $\boldsymbol{\rho}$ such that $\boldsymbol{\rho}^T\boldsymbol{\rho} = \boldsymbol{\Omega}^{-1}$.
+
+. . .
+
+In scalar algebra, if the variance of $\epsilon_i$ is $\sigma^2 \omega_{ii}$, we'd just divide the entire equation by $\sqrt{\omega_{ii}}$. In matrix form, we premultiply by $\boldsymbol{\rho}$:
+
+$$\rho_{ii} = \frac{1}{\sqrt{\omega_{ii}}}$$
+
+. . .
+
+**Example:** Three observations with $\omega = [1, 4, 9]$:
+
+$$\boldsymbol{\Omega} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 4 & 0 \\ 0 & 0 & 9 \end{bmatrix}, \quad \boldsymbol{\rho} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1/2 & 0 \\ 0 & 0 & 1/3 \end{bmatrix}$$
+
+- Observation 1 ($\omega = 1$): multiplied by 1 — no change (precise)
+- Observation 2 ($\omega = 4$): multiplied by $1/2$ — halved (moderate)
+- Observation 3 ($\omega = 9$): multiplied by $1/3$ — shrunk most (noisy)
+
+## Step 3: Transform and Estimate
+
+Premultiply the regression equation by $\boldsymbol{\rho}$:
+
+$$\boldsymbol{\rho}\mathbf{y} = \boldsymbol{\rho}\mathbf{X}\boldsymbol{\beta} + \boldsymbol{\rho}\boldsymbol{\epsilon}$$
+
+. . .
+
+Define $\mathbf{y}^* = \boldsymbol{\rho}\mathbf{y}$, $\mathbf{X}^* = \boldsymbol{\rho}\mathbf{X}$, $\boldsymbol{\epsilon}^* = \boldsymbol{\rho}\boldsymbol{\epsilon}$.
+
+. . .
+
+The variance of the transformed error:
+
+$$\text{var}(\epsilon_i^*) = \text{var}\left(\frac{\epsilon_i}{\sqrt{w_{ii}}}\right) = \frac{1}{w_{ii}} \cdot \sigma^2 w_{ii} = \sigma^2$$
+
+. . .
+
+The heteroskedasticity is gone. Every transformed error has the same variance $\sigma^2$.
+
+## The WLS Estimator
+
+Apply OLS to the transformed equation:
+
+$$\mathbf{b}^{*} = (\mathbf{X}^{*T}\mathbf{X}^{*})^{-1}\mathbf{X}^{*T}\mathbf{y}^{*}$$
+
+. . .
+
+Substituting $\mathbf{X}^* = \boldsymbol{\rho}\mathbf{X}$ and $\mathbf{y}^* = \boldsymbol{\rho}\mathbf{y}$, and since $\boldsymbol{\rho}^T\boldsymbol{\rho} = \boldsymbol{\Omega}^{-1}$:
+
+$$\mathbf{b}^{*} = (\mathbf{X}^{T} \boldsymbol{\Omega}^{-1}\mathbf{X})^{-1}\mathbf{X}^{T}\boldsymbol{\Omega}^{-1}\mathbf{y}$$
+
+. . .
+
+This is BLUE: $E(\mathbf{b}^*) = \boldsymbol{\beta}$ with minimum variance among linear unbiased estimators.
+
+The variance of the WLS estimator is:
+
+$$\text{var}(\mathbf{b}^*) = \sigma^2(\mathbf{X}^T\boldsymbol{\Omega}^{-1}\mathbf{X})^{-1}$$
+
+## The Catch: Where Do Weights Come From?
+
+To construct the weights, we need to **know what's causing the heteroskedasticity**. The procedure depends on $\boldsymbol{\Omega}$, but $\boldsymbol{\Omega}$ isn't given to us.
+
+. . .
+
+- If we get $\boldsymbol{\Omega}$ right, WLS is BLUE — the best we can do
+- If we get it wrong, WLS may actually perform **worse** than OLS
+
+. . .
+
+Common weighting schemes:
+
+- **Frequency weights**: row represents multiple units; weight = count
+- **Probability weights**: survey sampling; $w_i = 1/\pi_i$
+- **Aggregated data**: group means from $n_i$ individuals; weight = $n_i$
+- **Inverse-variance**: meta-analysis; $w_i = 1/\text{SE}_i^2$
+- **Propensity scores**: causal inference; balances treatment/control
+
+# White's Robust Standard Errors {background-color="white" style="color: black;"}
+
+An alternative that doesn't require knowing $\boldsymbol{\Omega}$
+
+## The Idea Behind Robust SEs
+
+Rather than transform the data, estimate the actual error covariance directly. White (1980) shows we can estimate $\boldsymbol{\Sigma}$:
+
+$$\hat{\boldsymbol{\Sigma}} = \begin{bmatrix}e_1^2&\cdots & 0\\0&e_2^2& 0\\\vdots & \vdots & \vdots\\0&\cdots &e_n^2\\\end{bmatrix}$$
+
+. . .
+
+Then plug this into the sandwich formula:
+
+$$(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T \hat{\boldsymbol{\Sigma}} \mathbf{X}(\mathbf{X}^{T}\mathbf{X})^{-1}$$
+
+. . .
+
+**Advantages:** No a priori knowledge of $\boldsymbol{\Omega}$ needed. Conservative and defensive.
+
+**Disadvantages:** Requires large samples. Less efficient than correctly specified WLS.
+
+## Trade-Offs: WLS vs. Robust SEs
+
+| | WLS | Robust SEs |
+|--|-----|-----------|
+| **Requires** | Knowledge of $\boldsymbol{\Omega}$ | Nothing beyond OLS |
+| **If correct** | BLUE — most efficient | Valid but less efficient |
+| **If wrong** | Can be *worse* than OLS | Still valid |
+| **Changes** | Coefficients and SEs | Only SEs |
+| **Best for** | Known weights (surveys, meta-analysis) | Default defensive strategy |
+
+. . .
+
+It is recommended to attempt multiple approaches and examine if they converge on the same solution.
+
+# Detection {background-color="white" style="color: black;"}
+
+How do we know if heteroskedasticity is present?
+
+## Visual Diagnostics
+
+The first step should always be visual. Plot the fitted values against the residuals. Under homoskedasticity, this should look like a random cloud with constant spread.
+
+. . .
+
+Any systematic pattern — a funnel, a megaphone, a triangle shape — suggests heteroskedasticity.
+
+. . .
+
+We can also plot squared residuals against each predictor. Systematic trends indicate which variable is driving the non-constant variance.
+
+## Goldfeld-Quandt Test
+
+1. Construct the null hypothesis: *no heteroskedasticity*
+2. Sort the data in ascending order of the suspected variable
+3. Remove $C$ middle observations; create two datasets (low and high)
+4. Run two regressions; compare $\text{RSS}_2/\text{RSS}_1 \sim F$
+
+. . .
+
+**Limitation:** Must know the suspected source. Low power in small samples.
+
+## Breusch-Pagan Test
+
+Regress the squared residuals on the independent variables:
+
+$$U_i = \beta_1 + \beta_2 X_{2i} + \beta_3 X_{3i} + \omega_i$$
+
+. . .
+
+**Null:** $H_0: \beta_2 = \beta_3 = \cdots = 0$ (no heteroskedasticity)
+
+**Test statistic:** $\text{RegSS}/2 \sim \chi^2_K$
+
+. . .
+
+If $\chi^2_{\text{computed}} > \chi^2_{\text{critical}}$, reject the null.
+
+## Cook-Weisberg Test
+
+Nearly identical to BP, but regress $U_i$ on the **fitted values** only:
+
+$$U_i = \beta_1 + \beta_2 \hat{Y}_i + \omega_i$$
+
+. . .
+
+- One degree of freedom, so somewhat more **powerful**
+- Doesn't tell us *which* variable causes heteroskedasticity
+- Still use $\text{RegSS}/2 \sim \chi^2_1$
+
+## White's Test
+
+The most general test. Regress $e_i^2$ on all predictors, their squares, and their cross-products:
+
+$$e_i^2 = \beta_1 + \beta_2 X_2 + \beta_3 X_3 + \beta_4 X_2^2 + \beta_5 X_3^2 + \beta_6 X_2 X_3 + \omega_i$$
+
+. . .
+
+Number of parameters: $P = [K(K+3)/2] + 1$
+
+Test: $n \times R^2 \sim \chi^2_P$
+
+. . .
+
+**Advantage:** No assumption about which variable causes heteroskedasticity.
+
+**Disadvantage:** Requires many parameters; can have low power with many predictors.
+
+# Applied Analysis: Arizona Precinct Data {background-color="white" style="color: black;"}
+
+Putting everything together
+
+## Estimation and Rescaling
+
+We rescale each predictor to a 0–1 range and mean-center so that coefficients are directly comparable.
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+rescale01 <- function(x) {
+  r <- (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+  r - mean(r, na.rm = TRUE)
+}
+
+precinct_voter_summary <- precinct_voter_summary |>
+  dplyr::mutate(
+    income_sc = rescale01(tract_acs_median_household_income),
+    latino_sc = rescale01(pct_latino),
+    age_sc    = rescale01(tract_acs_median_age),
+    gini_sc   = rescale01(tract_acs_gini_index)
+  )
+
+fit_az <- lm(trump_harris_margin ~ income_sc + latino_sc + age_sc + gini_sc,
+             data = precinct_voter_summary)
+summary(fit_az)
+```
+
+## Visual Diagnostics: Residuals vs. Fitted
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+#| fig-width: 10
+#| fig-height: 5
+library(ggplot2)
+
+plot_df <- data.frame(
+  fitted = fitted(fit_az),
+  residuals = residuals(fit_az)
+)
+
+ggplot(plot_df, aes(x = fitted, y = residuals)) +
+  geom_point(alpha = 0.3, size = 1.5, color = "gray40") +
+  geom_hline(yintercept = 0, color = "red", linewidth = 0.8) +
+  geom_smooth(method = "loess", se = FALSE, color = "steelblue", linewidth = 1) +
+  labs(x = expression(hat(Y) ~ "(Fitted Values)"),
+       y = "Residuals",
+       title = "Residuals vs. Fitted Values") +
+  theme_minimal()
+```
+
+Notice the spread of residuals changes across the range of fitted values. This is heteroskedasticity.
+
+## Visual Diagnostics: Squared Residuals by Predictor
+
+```{r, message = FALSE, warning = FALSE}
+#| echo: true
+#| code-fold: true
+#| fig-width: 10
+#| fig-height: 8
+model_data <- fit_az$model
+model_data$resid_sq <- residuals(fit_az)^2
+
+p1 <- ggplot(model_data, aes(x = income_sc, y = resid_sq)) +
+  geom_point(alpha = 0.3, size = 1) +
+  geom_smooth(method = "loess", se = FALSE, color = "steelblue") +
+  labs(x = "Median Household Income (scaled)", y = expression(e[i]^2)) +
+  theme_minimal()
+
+p2 <- ggplot(model_data, aes(x = latino_sc, y = resid_sq)) +
+  geom_point(alpha = 0.3, size = 1) +
+  geom_smooth(method = "loess", se = FALSE, color = "steelblue") +
+  labs(x = "Latino Population (scaled)", y = expression(e[i]^2)) +
+  theme_minimal()
+
+p3 <- ggplot(model_data, aes(x = age_sc, y = resid_sq)) +
+  geom_point(alpha = 0.3, size = 1) +
+  geom_smooth(method = "loess", se = FALSE, color = "steelblue") +
+  labs(x = "Median Age (scaled)", y = expression(e[i]^2)) +
+  theme_minimal()
+
+p4 <- ggplot(model_data, aes(x = gini_sc, y = resid_sq)) +
+  geom_point(alpha = 0.3, size = 1) +
+  geom_smooth(method = "loess", se = FALSE, color = "steelblue") +
+  labs(x = "Gini Index (scaled)", y = expression(e[i]^2)) +
+  theme_minimal()
+
+gridExtra::grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+## Formal Tests
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+library(lmtest)
+library(car)
+
+# Breusch-Pagan Test
+cat("=== Breusch-Pagan Test ===\n")
+bptest(fit_az)
+```
+
+. . .
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+# Cook-Weisberg (against fitted values)
+cat("=== Cook-Weisberg Test ===\n")
+ncvTest(fit_az)
+```
+
+## White's Test
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+# White's Test (BP against all predictors, squares, and cross-products)
+aux_data <- fit_az$model
+aux_data$yhat <- fitted(fit_az)
+aux_data$inc2  <- aux_data$income_sc^2
+aux_data$lat2  <- aux_data$latino_sc^2
+aux_data$age2  <- aux_data$age_sc^2
+aux_data$gini2 <- aux_data$gini_sc^2
+
+cat("=== White's Test ===\n")
+bptest(fit_az, ~ income_sc + latino_sc + age_sc + gini_sc +
+                  inc2 + lat2 + age2 + gini2 +
+                  income_sc:latino_sc +
+                  income_sc:age_sc +
+                  income_sc:gini_sc +
+                  latino_sc:age_sc +
+                  latino_sc:gini_sc +
+                  age_sc:gini_sc,
+       data = aux_data)
+```
+
+. . .
+
+All tests reject the null of constant variance. There is strong evidence of heteroskedasticity in the Arizona precinct data.
+
+## Testing Against Specific Predictors
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+cat("=== ncvTest against income ===\n")
+ncvTest(fit_az, ~ income_sc)
+
+cat("\n=== ncvTest against latino ===\n")
+ncvTest(fit_az, ~ latino_sc)
+```
+
+. . .
+
+This helps identify *which* variable drives the heteroskedasticity.
+
+## Residual Plots: `car` Package
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+#| fig-width: 10
+#| fig-height: 8
+residualPlots(fit_az, tests = TRUE)
+```
+
+## Robust Standard Errors
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+library(sandwich)
+
+cat("=== OLS Standard Errors ===\n")
+coeftest(fit_az)
+```
+
+## Robust Standard Errors (Continued)
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+cat("=== HC1 (White) Robust Standard Errors ===\n")
+coeftest(fit_az, vcov = vcovHC(fit_az, type = "HC1"))
+```
+
+. . .
+
+The coefficient *estimates* don't change — only the standard errors and therefore the $t$-statistics and $p$-values. If the robust SEs differ substantially from OLS, that's evidence of heteroskedasticity affecting inference.
+
+## WLS Correction: Two-Step Procedure
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+# Step 1: Estimate the variance function
+resid_sq <- residuals(fit_az)^2
+resid_sq[resid_sq == 0] <- min(resid_sq[resid_sq > 0])  # guard against log(0)
+wls_data <- fit_az$model
+wls_data$log_resid_sq <- log(resid_sq)
+
+var_model <- lm(log_resid_sq ~ income_sc + latino_sc + age_sc + gini_sc,
+                data = wls_data)
+
+# Step 2: Compute weights
+# sigma_hat_i = sqrt(exp(fitted values))
+# weight = 1 / sigma_hat -- matching rho_ii = 1/sqrt(omega_ii)
+wls_data$sigma_hat <- sqrt(exp(fitted(var_model)))
+wls_data$w <- 1 / wls_data$sigma_hat
+
+# Step 3: WLS model
+fit_wls <- glm(trump_harris_margin ~ income_sc + latino_sc + age_sc + gini_sc,
+               data = wls_data,
+               weights = w,
+               family = gaussian())
+summary(fit_wls)
+```
+
+## Comparing Standard Errors: OLS vs. Robust vs. WLS
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+ols_se <- sqrt(diag(vcov(fit_az)))
+robust_se <- sqrt(diag(vcovHC(fit_az, type = "HC1")))
+wls_se <- sqrt(diag(vcov(fit_wls)))
+
+comparison <- data.frame(
+  OLS = round(ols_se, 6),
+  Robust_HC1 = round(robust_se, 6),
+  WLS = round(wls_se, 6)
+)
+comparison |> knitr::kable()
+```
+
+. . .
+
+Where the robust and WLS standard errors agree with each other but differ from OLS, you can be fairly confident the OLS standard errors are misleading.
+
+## Residual Map
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+library(sf)
+library(leaflet)
+
+az_resid <- data.frame(
+  dos_precinct_key = precinct_voter_summary$dos_precinct_key[as.integer(rownames(fit_az$model))],
+  resid_sq = residuals(fit_az)^2,
+  margin = fit_az$model$trump_harris_margin
+)
+
+az_map <- precinct_tract_data |>
+  dplyr::left_join(az_resid, by = "dos_precinct_key") |>
+  dplyr::filter(!is.na(resid_sq))
+
+az_map <- st_transform(az_map, 4326)
+az_map <- az_map[st_geometry_type(az_map) %in% c("POLYGON", "MULTIPOLYGON"), ]
+
+pal <- colorNumeric(palette = "YlOrRd", domain = az_map$resid_sq)
+
+leaflet(az_map, width = "100%", height = 500) |>
+  addProviderTiles(providers$CartoDB.Positron) |>
+  addPolygons(
+    fillColor = ~pal(resid_sq),
+    fillOpacity = 0.7,
+    color = "#444", weight = 0.3, opacity = 0.5,
+    label = ~paste0(
+      "<b>", precinct_name, "</b> (", county, ")<br>",
+      "Margin: ", round(margin * 100, 1), " pts<br>",
+      "Squared Residual: ", round(resid_sq, 4)
+    ) |> lapply(htmltools::HTML),
+    highlightOptions = highlightOptions(weight = 2, color = "black", bringToFront = TRUE)
+  ) |>
+  addLegend("bottomright", pal = pal, values = ~resid_sq,
+            title = "Squared<br>Residual", opacity = 0.7)
+```
+
+If heteroskedasticity has a spatial pattern, this can help diagnose the source.
+
+## The Diagnostic Workflow
+
+1. **Fit the model** and examine residual plots for visual signs
+2. **Run formal tests** (BP, CW, White) to confirm and identify drivers
+3. **Apply corrections** — robust SEs or WLS — and compare results to OLS
+4. If robust and WLS agree but differ from OLS, the OLS SEs are misleading
+
+. . .
+
+In practice, robust SEs are the **default defensive strategy**. Use WLS when the variance structure is known or well-motivated.
+
+## Summary
+
+1. **Interactions** relax the additivity assumption — the effect of one predictor depends on the value of another
+2. Categorical interactions produce different slopes for different groups; continuous interactions produce marginal effects that vary smoothly
+3. Always include lower-order constituent terms; use marginal effect plots for interpretation
+4. **Heteroskedasticity** violates Gauss-Markov Assumption 4 — OLS remains unbiased but SEs are wrong
+5. **WLS** transforms the data to restore constant variance, producing a BLUE estimator
+6. **Robust standard errors** (White, 1980) correct inference without requiring knowledge of $\boldsymbol{\Omega}$
+7. Visual diagnostics first, formal tests second, corrections third — always compare approaches
+
+## References
+
+- Breusch, T. S., and A. R. Pagan. 1979. "A Simple Test for Heteroskedasticity and Random Coefficient Variation." *Econometrica* 47(5): 1287–1294.
+- Cook, R. D., and S. Weisberg. 1983. "Diagnostics for Heteroscedasticity in Regression." *Biometrika* 70(1): 1–10.
+- Fox, John. 2008. *Applied Regression Analysis and Generalized Linear Models*. Sage.
+- Fox, John, and Sanford Weisberg. 2019. *An R Companion to Applied Regression*. 3rd ed. Sage.
+- Goldfeld, S. M., and R. E. Quandt. 1965. "Some Tests for Homoscedasticity." *Journal of the American Statistical Association* 60(310): 539–547.
+- White, Halbert. 1980. "A Heteroskedasticity-Consistent Covariance Matrix Estimator and a Direct Test for Heteroskedasticity." *Econometrica* 48(4): 817–838.

@@ -1,6 +1,7 @@
 # Linear Regression Class Repository
 
 [![Launch RStudio](https://img.shields.io/badge/Launch-RStudio-blue?logo=rstudio)](https://mybinder.org/v2/gh/crweber9874/linear_regression_class/main?urlpath=rstudio)
+[![Lecture Slides](https://img.shields.io/badge/Lecture_Slides-View_Online-AB0520?style=for-the-badge&logo=github)](https://crweber9874.github.io/linear_regression_class/)
 
 ## Overview
 
@@ -97,6 +98,7 @@ The `lectures/` folder contains Quarto (`.qmd`) files for each lecture topic. Se
 | Linear Regression and Matrix Algebra | [linear_regression_matrix_algebra.qmd](lectures/linear_regression_matrix_algebra.qmd) | [RPubs](https://rpubs.com/crweber9874/intro_matrices) |
 | Multiple Regression | [multiple_regression.qmd](lectures/multiple_regression.qmd) | [RPubs](https://rpubs.com/crweber9874/Matrices_and_Fit) |
 | Dummy Variables and Model Fit | [dummy_variables_model_fit.qmd](lectures/dummy_variables_model_fit.qmd) | |
+| Interactions and Heteroskedasticity | [interactions_heteroskedasticity.qmd](lectures/interactions_heteroskedasticity.qmd) | |
 
 **Course Schedule:**
 
@@ -105,6 +107,7 @@ The `lectures/` folder contains Quarto (`.qmd`) files for each lecture topic. Se
 - **Week 4**: Matrix Algebra
 - **Week 5**: Multiple Regression and Matrix Algebra
 - **Week 6**: Dummy Variables, Model Fit, and Cross-Validation
+- **Week 8**: Interactions and Heteroskedasticity
 
 Topics follow the progression in Fox's Applied Regression Analysis:
 1. Simple linear regression

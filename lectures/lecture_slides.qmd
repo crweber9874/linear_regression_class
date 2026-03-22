@@ -23,7 +23,7 @@ This page provides links to all lecture materials for POL 682. Schedule follows 
 | Linear Regression and Matrix Algebra | [linear_regression_matrix_algebra.qmd](linear_regression_matrix_algebra.qmd) | [RPubs](https://rpubs.com/crweber9874/matrix) |
 | Multiple Regression | [multiple_regression.qmd](multiple_regression.qmd) | [RPubs](https://rpubs.com/crweber9874/Matrices_and_Fit) |
 | Dummy Variables and Model Fit | [dummy_variables_model_fit.qmd](dummy_variables_model_fit.qmd) | |
-
+| Interactions and Heteroskedasticity | [interactions_heteroskedasticity.qmd](interactions_heteroskedasticity.qmd) | |
 
 
 ## Course Schedule
@@ -48,6 +48,10 @@ This page provides links to all lecture materials for POL 682. Schedule follows 
 ### Week 7: Dummy Variables and Model Fit
 - **Topics**: Dummy Variables, R-squared, Cross-Validation, and the Achen Debate
 - **Files**: [dummy_variables_model_fit.qmd](dummy_variables_model_fit.qmd)
+
+### Week 8: Interactions and Heteroskedasticity
+- **Topics**: Categorical and Continuous Interactions, Non-Additivity, Heteroskedasticity Detection and Correction, WLS, Robust Standard Errors
+- **Files**: [interactions_heteroskedasticity.qmd](interactions_heteroskedasticity.qmd)
 
 ## External Resources
 
