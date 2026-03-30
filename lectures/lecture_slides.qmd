@@ -24,6 +24,7 @@ This page provides links to all lecture materials for POL 682. Schedule follows 
 | Multiple Regression | [multiple_regression.qmd](multiple_regression.qmd) | [RPubs](https://rpubs.com/crweber9874/Matrices_and_Fit) |
 | Dummy Variables and Model Fit | [dummy_variables_model_fit.qmd](dummy_variables_model_fit.qmd) | |
 | Interactions and Heteroskedasticity | [interactions_heteroskedasticity.qmd](interactions_heteroskedasticity.qmd) | |
+| Multicollinearity | [multicollinearity.qmd](multicollinearity.qmd) | |
 
 
 ## Course Schedule
@@ -52,6 +53,10 @@ This page provides links to all lecture materials for POL 682. Schedule follows 
 ### Week 8: Interactions and Heteroskedasticity
 - **Topics**: Categorical and Continuous Interactions, Non-Additivity, Heteroskedasticity Detection and Correction, WLS, Robust Standard Errors
 - **Files**: [interactions_heteroskedasticity.qmd](interactions_heteroskedasticity.qmd)
+
+### Week 9: Multicollinearity
+- **Topics**: Perfect and Imperfect Collinearity, VIF, Bias-Variance Tradeoff, Ridge and Lasso Regression
+- **Files**: [multicollinearity.qmd](multicollinearity.qmd)
 
 ## External Resources
 

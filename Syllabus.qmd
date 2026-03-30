@@ -225,7 +225,8 @@ Complete all assigned modules by the deadline.
 ### Week 9 (3/24): Collinearity
 
 - **Topics**: Multicollinearity detection and solutions
-- **Reading**: Fox, Chapter 13
+- **Reading**: Fox, Chapter 13; Course Notes, Chapter 8
+- **Slides**: [multicollinearity.qmd](lectures/multicollinearity.qmd)
 
 ### Week 10 (3/31): Influence
 

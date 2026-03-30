@@ -99,6 +99,7 @@ The `lectures/` folder contains Quarto (`.qmd`) files for each lecture topic. Se
 | Multiple Regression | [multiple_regression.qmd](lectures/multiple_regression.qmd) | [RPubs](https://rpubs.com/crweber9874/Matrices_and_Fit) |
 | Dummy Variables and Model Fit | [dummy_variables_model_fit.qmd](lectures/dummy_variables_model_fit.qmd) | |
 | Interactions and Heteroskedasticity | [interactions_heteroskedasticity.qmd](lectures/interactions_heteroskedasticity.qmd) | |
+| Multicollinearity | [multicollinearity.qmd](lectures/multicollinearity.qmd) | |
 
 **Course Schedule:**
 
@@ -108,6 +109,7 @@ The `lectures/` folder contains Quarto (`.qmd`) files for each lecture topic. Se
 - **Week 5**: Multiple Regression and Matrix Algebra
 - **Week 6**: Dummy Variables, Model Fit, and Cross-Validation
 - **Week 8**: Interactions and Heteroskedasticity
+- **Week 9**: Multicollinearity
 
 Topics follow the progression in Fox's Applied Regression Analysis:
 1. Simple linear regression
