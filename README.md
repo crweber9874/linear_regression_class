@@ -89,17 +89,17 @@ The `lectures/` folder contains Quarto (`.qmd`) files for each lecture topic. Se
 
 **Current lectures:**
 
-| Lecture | File | RPubs |
-|---------|------|-------|
-| Introduction to Linear Regression | [Introduction_to_Linear_Regression.qmd](lectures/Introduction_to_Linear_Regression.qmd) | [RPubs](https://rpubs.com/crweber9874/linereg1) |
-| Derivation of OLS Estimator | [ols_estimator.qmd](lectures/ols_estimator.qmd) | [RPubs](https://rpubs.com/crweber9874/1390443) |
-| OLS Derivation (Detailed Notes) | [OLS_Derivation.qmd](lectures/OLS_Derivation.qmd) | [RPubs](https://rpubs.com/crweber9874/1390453) |
-| Gauss-Markov Assumptions | [gauss_markov_slides.qmd](lectures/gauss_markov_slides.qmd) | [RPubs](https://rpubs.com/crweber9874/gm_assumptions) |
-| Linear Regression and Matrix Algebra | [linear_regression_matrix_algebra.qmd](lectures/linear_regression_matrix_algebra.qmd) | [RPubs](https://rpubs.com/crweber9874/intro_matrices) |
-| Multiple Regression | [multiple_regression.qmd](lectures/multiple_regression.qmd) | [RPubs](https://rpubs.com/crweber9874/Matrices_and_Fit) |
-| Dummy Variables and Model Fit | [dummy_variables_model_fit.qmd](lectures/dummy_variables_model_fit.qmd) | |
-| Interactions and Heteroskedasticity | [interactions_heteroskedasticity.qmd](lectures/interactions_heteroskedasticity.qmd) | |
-| Multicollinearity | [multicollinearity.qmd](lectures/multicollinearity.qmd) | |
+| Lecture | File | Slides |
+|---------|------|--------|
+| Introduction to Linear Regression | [Introduction_to_Linear_Regression.qmd](lectures/Introduction_to_Linear_Regression.qmd) | [View](https://crweber9874.github.io/linear_regression_class/lectures/Introduction_to_Linear_Regression.html) |
+| Derivation of OLS Estimator | [ols_estimator.qmd](lectures/ols_estimator.qmd) | [View](https://crweber9874.github.io/linear_regression_class/lectures/ols_estimator.html) |
+| OLS Derivation (Detailed Notes) | [OLS_Derivation.qmd](lectures/OLS_Derivation.qmd) | [View](https://crweber9874.github.io/linear_regression_class/lectures/OLS_Derivation.html) |
+| Gauss-Markov Assumptions | [gauss_markov_slides.qmd](lectures/gauss_markov_slides.qmd) | [View](https://crweber9874.github.io/linear_regression_class/lectures/gauss_markov_slides.html) |
+| Linear Regression and Matrix Algebra | [linear_regression_matrix_algebra.qmd](lectures/linear_regression_matrix_algebra.qmd) | [View](https://crweber9874.github.io/linear_regression_class/lectures/linear_regression_matrix_algebra.html) |
+| Multiple Regression | [multiple_regression.qmd](lectures/multiple_regression.qmd) | [View](https://crweber9874.github.io/linear_regression_class/lectures/multiple_regression.html) |
+| Dummy Variables and Model Fit | [dummy_variables_model_fit.qmd](lectures/dummy_variables_model_fit.qmd) | [View](https://crweber9874.github.io/linear_regression_class/lectures/dummy_variables_model_fit.html) |
+| Interactions and Heteroskedasticity | [interactions_heteroskedasticity.qmd](lectures/interactions_heteroskedasticity.qmd) | [View](https://crweber9874.github.io/linear_regression_class/lectures/interactions_heteroskedasticity.html) |
+| Multicollinearity | [multicollinearity.qmd](lectures/multicollinearity.qmd) | [View](https://crweber9874.github.io/linear_regression_class/lectures/multicollinearity.html) |
 
 **Course Schedule:**
 
