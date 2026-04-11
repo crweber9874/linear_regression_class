@@ -111,7 +111,7 @@ The `lectures/` folder contains Quarto (`.qmd`) files for each lecture topic. Se
 - **Week 6**: Dummy Variables, Model Fit, and Cross-Validation
 - **Week 8**: Interactions and Heteroskedasticity
 - **Week 9**: Multicollinearity
-- **Weeks 11-12**: Autocorrelation and Panel Data
+- **Weeks 10-11**: Autocorrelation and Panel Data
 
 Topics follow the progression in Fox's Applied Regression Analysis:
 1. Simple linear regression

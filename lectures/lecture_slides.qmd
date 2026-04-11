@@ -59,7 +59,7 @@ This page provides links to all lecture materials for POL 682. Schedule follows 
 - **Topics**: Perfect and Imperfect Collinearity, VIF, Bias-Variance Tradeoff, Ridge and Lasso Regression
 - **Files**: [multicollinearity.qmd](multicollinearity.qmd)
 
-### Weeks 11-12: Autocorrelation and Panel Data
+### Weeks 10-11: Autocorrelation and Panel Data
 - **Topics**: AR(1) Errors, Durbin-Watson, GLS, Newey-West, Panel Data, Fixed Effects, Random Effects, Multilevel Models
 - **Files**: [autocorrelation_panel.qmd](autocorrelation_panel.qmd)
 
